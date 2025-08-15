@@ -9,10 +9,18 @@
   <!-- Jupiter Plugin -->
 <script src="https://plugin.jup.ag/plugin-v1.js" data-preload defer></script>
 
+<!-- Solana Wallet Adapter -->
+<script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.1.15/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.15/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-web@0.11.9/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/web3.js@1.87.0/lib/index.iife.min.js"></script>
+
 </head>
 <body>
   <!-- Floating theme toggle -->
   <button id="themeToggle" class="theme-toggle">🌙</button>
+
+  <button id="connectWallet" class="connect-wallet">Connect Wallet</button>
 
   <!-- Header -->
   <header class="app-header">
