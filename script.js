@@ -135,8 +135,9 @@ document.getElementById("shareTelegram").onclick = () => {
 
         jupInited = true;
         jupInitPromise = window.Jupiter.init({
-            displayMode: 'modal',
-            formProps: {
+         displayMode: 'integrated',
+         container: document.getElementById('jupiterContainer'),
+         formProps: {
                 initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
                 initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk' // MCAP token
             }
@@ -171,3 +172,31 @@ if ("serviceWorker" in navigator) {
             .catch((err) => console.error("Service Worker registration failed:", err));
     });
 }
+
+// -----------------
+// Swipe Navigation
+// -----------------
+let currentScreen = 0;
+const totalScreens = 3;
+let startX = 0;
+
+const app = document.getElementById('app');
+
+app.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+});
+
+app.addEventListener('touchend', e => {
+  const endX = e.changedTouches[0].clientX;
+  const deltaX = startX - endX;
+
+  if (Math.abs(deltaX) > 50) { // swipe threshold
+    if (deltaX > 0 && currentScreen < totalScreens - 1) {
+      currentScreen++;
+    } else if (deltaX < 0 && currentScreen > 0) {
+      currentScreen--;
+    }
+    app.style.transform = `translateX(-${currentScreen * 100}%)`;
+  }
+});
+
