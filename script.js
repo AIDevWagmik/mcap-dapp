@@ -132,26 +132,26 @@ async function initWalletAdapter() {
         throw new Error("Wallet Adapter SDK not loaded yet.");
     }
 
-    const { WalletAdapterNetwork } = solanaWalletAdapterBase;
-    const network = WalletAdapterNetwork.Mainnet;
+   const { WalletAdapterNetwork } = window.SolanaWalletAdapter.Base;
+   const network = WalletAdapterNetwork.Mainnet;
 
-    const wallets = [
-        new solanaWalletAdapterWallets.PhantomWalletAdapter(),
-        new solanaWalletAdapterWallets.BackpackWalletAdapter(),
-        new solanaWalletAdapterWallets.SolflareWalletAdapter({ network }),
-        new solanaWalletAdapterWallets.GlowWalletAdapter(),
-        new solanaWalletAdapterWalletconnect.WalletConnectWalletAdapter({
-            network,
-            options: {
-                relayUrl: "wss://relay.walletconnect.com",
-                projectId: "test" // Replace with your WC project ID
-            }
-        }),
-        new solanaMobileWalletAdapter.WalletAdapterMobile({
-            appIdentity: { name: "MCAP App" },
-            network
-        })
-    ];
+   const wallets = [
+    new window.SolanaWalletAdapter.Wallets.PhantomWalletAdapter(),
+    new window.SolanaWalletAdapter.Wallets.BackpackWalletAdapter(),
+    new window.SolanaWalletAdapter.Wallets.SolflareWalletAdapter({ network }),
+    new window.SolanaWalletAdapter.Wallets.GlowWalletAdapter(),
+    new window.SolanaWalletAdapter.WalletConnect.WalletConnectWalletAdapter({
+        network,
+        options: {
+            relayUrl: "wss://relay.walletconnect.com",
+            projectId: "test" // Replace with your WC project ID
+        }
+    }),
+    new window.SolanaWalletAdapter.Mobile.WalletAdapterMobile({
+        appIdentity: { name: "MCAP App" },
+        network
+    })
+];
 
     const modal = new solanaWalletAdapterUI.WalletModal(wallets, {
         container: document.getElementById("wallet-modal-root")
