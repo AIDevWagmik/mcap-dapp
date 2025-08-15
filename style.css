@@ -42,6 +42,12 @@ html, body {
 .app-header {
   text-align: center;
   padding: 1rem;
+  background: var(--page-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 .logo {
   height: 48px;
@@ -198,6 +204,7 @@ footer {
 
 /* Swipe layout */
 #app {
+  padding-top: 70px;
   display: flex;
   height: 100%;
   width: 300%; /* 3 screens wide */
@@ -212,6 +219,7 @@ footer {
   align-items: center;
   justify-content: flex-start;
   position: relative;
+  height: 100%;
 }
 .swipe-hint {
   position: absolute;
