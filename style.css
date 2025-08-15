@@ -11,12 +11,14 @@ html[data-theme="dark"] {
   --text-color: #e8eef7;
 }
 
-body {
+html, body {
+  height: 100%;
   margin: 0;
   font-family: system-ui, sans-serif;
   background: var(--page-bg);
   color: var(--text-color);
   transition: background 0.3s, color 0.3s;
+  overflow: hidden; /* prevent vertical scroll on swipe layout */
 }
 
 /* Floating theme toggle */
@@ -33,31 +35,16 @@ body {
   font-size: 1.1rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
 }
 
-/* Logo header */
+/* Logo header (optional, remove if not used) */
 .app-header {
   text-align: center;
   padding: 1rem;
 }
 .logo {
   height: 48px;
-}
-
-/* Card layout */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 1rem;
-  margin: 1rem 0;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-2px);
-}
-html[data-theme="dark"] .card {
-  background: #1a2538;
 }
 
 /* Section titles (MCAP style) */
@@ -101,7 +88,7 @@ button:hover {
   margin-top: 0.5rem;
 }
 
-/* Footer */
+/* Footer (optional, remove if not needed) */
 footer {
   text-align: center;
   font-size: 0.8rem;
@@ -109,6 +96,7 @@ footer {
   opacity: 0.8;
 }
 
+/* Forecast cards */
 .forecast-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -147,6 +135,7 @@ footer {
   color: #28a745; /* green */
 }
 
+/* Share buttons */
 #shareButtons {
     margin-top: 15px;
     display: flex;
@@ -154,7 +143,6 @@ footer {
     justify-content: center;
     flex-wrap: wrap;
 }
-
 #shareButtons button {
     background: var(--blue-title, #2877cd);
     color: #fff;
@@ -167,16 +155,15 @@ footer {
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     transition: background 0.2s ease, transform 0.2s ease;
 }
-
 #shareButtons button:hover {
     background: #1f5da1;
     transform: translateY(-1px);
 }
-
 #shareButtons.hidden {
     display: none;
 }
 
+/* Disclaimer modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -209,3 +196,28 @@ footer {
   background: #1f5da1;
 }
 
+/* Swipe layout */
+#app {
+  display: flex;
+  height: 100%;
+  width: 300%; /* 3 screens wide */
+  transition: transform 0.3s ease;
+}
+.screen {
+  flex: 0 0 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+.swipe-hint {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+}
