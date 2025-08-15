@@ -201,3 +201,38 @@ app.addEventListener('touchend', e => {
   }
 });
 
+const headerLogo = document.getElementById("header-logo");
+
+// Map each screen index to its PNG
+const headerImages = [
+  "assets/logos/logo1.png", // Prediction screen
+  "assets/logos/logo2.png", // Jupiter Swap screen
+  "assets/logos/logo3.png"  // Wallet Tracking screen
+];
+
+function updateHeaderLogo(index) {
+  headerLogo.src = headerImages[index];
+}
+
+// Call when swipe changes
+function goToScreen(index) {
+  currentScreen = index;
+  app.style.transform = `translateX(-${currentScreen * 100}%)`;
+  updateHeaderLogo(currentScreen);
+}
+
+// Update swipe logic to use goToScreen
+app.addEventListener('touchend', e => {
+  const endX = e.changedTouches[0].clientX;
+  const deltaX = startX - endX;
+
+  if (Math.abs(deltaX) > 50) {
+    if (deltaX > 0 && currentScreen < totalScreens - 1) {
+      goToScreen(currentScreen + 1);
+    } else if (deltaX < 0 && currentScreen > 0) {
+      goToScreen(currentScreen - 1);
+    }
+  }
+});
+
+
