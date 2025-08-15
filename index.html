@@ -8,70 +8,63 @@
 
   <!-- Jupiter Plugin -->
   <script src="https://plugin.jup.ag/plugin-v1.js" data-preload defer></script>
+  <!-- Your app code -->
+  <script defer src="script.js"></script>
 </head>
 <body>
+
   <!-- Disclaimer Modal -->
   <div id="disclaimerModal" class="modal-overlay">
     <div class="modal-content">
       <h2>Disclaimer</h2>
-      <p>
-        This tool is for entertainment purposes only and does not constitute financial advice.
-        Always do your own research before making investment decisions.
-      </p>
+      <p>This tool is for entertainment purposes only and does not constitute financial advice.</p>
       <button id="acceptDisclaimer">I Understand</button>
     </div>
   </div>
 
-  <!-- Floating Theme Toggle -->
-  <button id="themeToggle" class="theme-toggle">🌙</button>
+  <div class="mobile-frame">
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="theme-toggle">🌙</button>
 
-  <!-- Fixed Header -->
-  <header id="app-header" class="app-header">
-    <img id="header-logo" src="assets/logos/logo1.png" alt="Header Logo" class="logo" />
-  </header>
+    <!-- Header -->
+    <header class="app-header">
+      <img id="header-logo" src="assets/logos/logo1.png" alt="Header Logo" class="logo" />
+    </header>
 
-  <!-- Swipe Container -->
-  <main id="app">
-    <!-- Screen 1: Prediction -->
-    <section class="screen">
-      <div class="section-title">MCAP Predictor</div>
-      <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address" />
-      <button id="getPrediction">Get Prediction</button>
+    <!-- Swipe Container -->
+    <main id="app">
+      <!-- Screen 1: Prediction -->
+      <section class="screen">
+        <div class="section-title">MCAP Predictor</div>
+        <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address" />
+        <button id="getPrediction">Get Prediction</button>
+        <div id="predictionResult" class="hidden"></div>
+        <div id="shareButtons" class="hidden">
+          <button id="shareX">Share on X</button>
+          <button id="shareTelegram">Share on Telegram</button>
+        </div>
+        <p class="disclaimer">⚠ Entertainment only – not financial advice.</p>
+      </section>
 
-      <div id="predictionResult" class="hidden"></div>
+      <!-- Screen 2: Jupiter Swap -->
+      <section class="screen">
+        <div class="section-title">Swap with Jupiter</div>
+        <button id="openSwap">
+          <img src="assets/logos/jupiter.png" alt="Jupiter Logo" style="height: 24px; margin-right: 8px; vertical-align: middle;" />
+          Open Swap
+        </button>
+        <div id="jupiterContainer"></div>
+      </section>
 
-      <!-- Social Share Buttons -->
-      <div id="shareButtons" class="hidden">
-        <button id="shareX">Share on X</button>
-        <button id="shareTelegram">Share on Telegram</button>
-      </div>
+      <!-- Screen 3: Wallet Tracking -->
+      <section class="screen">
+        <div class="section-title">Wallet Tracking (Coming Soon)</div>
+        <p>Follow top wallets and see which tokens they buy.</p>
+      </section>
+    </main>
 
-      <p class="disclaimer">⚠ Entertainment only – not financial advice.</p>
-    </section>
-
-    <!-- Screen 2: Jupiter Swap -->
-    <section class="screen">
-      <div class="section-title">Swap with Jupiter</div>
-      <button id="openSwap">
-        <img src="assets/logos/jupiter.png" alt="Jupiter Logo" style="height: 24px; vertical-align: middle; margin-right: 8px;" />
-        Open Swap
-      </button>
-      <div id="jupiterContainer"></div>
-    </section>
-
-    <!-- Screen 3: Wallet Tracking -->
-    <section class="screen">
-      <div class="section-title">Wallet Tracking (Coming Soon)</div>
-      <p>Follow top wallets and see which tokens they buy.</p>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    © 2025 MCAP Official – Caps gonna cap.
-  </footer>
-
-  <!-- Your App Code (placed last so DOM is ready) -->
-  <script src="script.js"></script>
+    <!-- Footer -->
+    <footer>© 2025 MCAP Official – Caps gonna cap.</footer>
+  </div>
 </body>
 </html>
