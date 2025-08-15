@@ -35,42 +35,43 @@
     <img src="assets/logos/mcap-logo.png" alt="MCAP Logo" class="logo">
   </header>
 
-  <main>
-   <!-- Prediction Card -->
-<div class="card">
-  <div class="section-title">MCAP Predictor</div>
-  <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address">
-  <button id="getPrediction">Get Prediction</button>
-  
-  <div id="predictionResult" class="hidden"></div>
-  
-  <!-- Social Share Buttons -->
-  <div id="shareButtons" class="hidden">
+ <main id="app">
+  <!-- Screen 1: Prediction -->
+  <section class="screen">
+    <div class="section-title">MCAP Predictor</div>
+    <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address">
+    <button id="getPrediction">Get Prediction</button>
+
+    <div id="predictionResult" class="hidden"></div>
+
+    <!-- Social Share Buttons -->
+    <div id="shareButtons" class="hidden">
       <button id="shareX">Share on X</button>
       <button id="shareTelegram">Share on Telegram</button>
-  </div>
-  
-  <p class="disclaimer">⚠ Entertainment only – not financial advice.</p>
-</div>
-
-
-    <!-- Jupiter Swap Card -->
-   <!-- Jupiter Swap Card -->
-<div class="card">
-  <div class="section-title">Swap with Jupiter</div>
-  <button id="openSwap">
-    <img src="assets/logos/jupiter.png" alt="Jupiter Logo" style="height: 24px; vertical-align: middle; margin-right: 8px;">
-    Open Swap
-  </button>
-</div>
-
-    <!-- Wallet Tracking Card -->
-    <div class="card">
-      <div class="section-title">Wallet Tracking (Coming Soon)</div>
-      <p>Follow top wallets and see which tokens they buy.</p>
     </div>
 
-  </main>
+    <p class="disclaimer">⚠ Entertainment only – not financial advice.</p>
+    <div class="swipe-hint">Swipe →</div>
+  </section>
+
+  <!-- Screen 2: Jupiter Swap -->
+  <section class="screen">
+    <div class="section-title">Swap with Jupiter</div>
+    <button id="openSwap">
+      <img src="assets/logos/jupiter.png" alt="Jupiter Logo" style="height: 24px; vertical-align: middle; margin-right: 8px;">
+      Open Swap
+    </button>
+    <div id="jupiterContainer"></div>
+    <div class="swipe-hint">Swipe →</div>
+  </section>
+
+  <!-- Screen 3: Wallet Tracking -->
+  <section class="screen">
+    <div class="section-title">Wallet Tracking (Coming Soon)</div>
+    <p>Follow top wallets and see which tokens they buy.</p>
+  </section>
+</main>
+
 
   <!-- Footer -->
   <footer>
