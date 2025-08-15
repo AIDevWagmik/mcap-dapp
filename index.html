@@ -6,20 +6,16 @@
   <title>MCAP App</title>
   <link rel="stylesheet" href="style.css"> <!-- Adjust path if CSS is in a folder -->
 
-<!-- Jupiter Plugin -->
+<!-- Jupiter Plugin (still UMD, no ESM build available) -->
 <script src="https://plugin.jup.ag/plugin-v1.js" data-preload defer></script>
 
-<!-- Solana Web3.js -->
+<!-- Solana Web3.js (UMD is fine, needed for blockchain calls) -->
 <script src="https://unpkg.com/@solana/web3.js@1.87.0/lib/index.iife.min.js"></script>
 
-<!-- Solana Mobile Wallet Adapter (UMD build) -->
-<script src="https://unpkg.com/@solana-mobile/wallet-adapter-mobile@0.1.7/lib/cdn.js"></script>
-
-<!-- Solana Wallet Adapter UI (UMD build + CSS) -->
+<!-- Wallet Adapter UI CSS (needed for modal styles) -->
 <link rel="stylesheet" href="https://unpkg.com/@solana/wallet-adapter-ui@0.9.35/styles.css" />
-<script src="https://unpkg.com/@solana/wallet-adapter-ui@0.9.35/lib/cdn.js"></script>
 
-<!-- Your app code (ESM) -->
+<!-- Your app code (pure ESM version) -->
 <script type="module" src="script.js"></script>
 
 
