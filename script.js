@@ -100,12 +100,23 @@ predictionResult.innerHTML = html;
   });
 });
 
+// -----------------
+// Wallet & Jupiter
+// -----------------
+import { WalletAdapterNetwork } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@0.9.23/+esm";
+import { PhantomWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-phantom@0.9.13/+esm";
+import { BackpackWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-backpack@0.1.9/+esm";
+import { SolflareWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-solflare@0.5.17/+esm";
+import { GlowWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-glow@0.1.9/+esm";
+import { WalletConnectWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-walletconnect@0.1.14/+esm";
+import { WalletAdapterMobile } from "https://cdn.jsdelivr.net/npm/@solana-mobile/wallet-adapter-mobile@0.1.7/+esm";
+import { WalletModal } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-ui@0.9.26/+esm";
+
 let connectedWallet = null;
 let connectedWalletProvider = null;
 
-console.log("script.js loaded");
+console.log("Wallet section loaded");
 
-// Helper: wait for element to exist (safe for early calls)
 function waitForElement(id, callback) {
     function startObserving() {
         const el = document.getElementById(id);
@@ -119,41 +130,32 @@ function waitForElement(id, callback) {
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
-
-    if (document.body) {
-        startObserving();
-    } else {
-        document.addEventListener("DOMContentLoaded", startObserving);
-    }
+    if (document.body) startObserving();
+    else document.addEventListener("DOMContentLoaded", startObserving);
 }
 
 async function initWalletAdapter() {
-    if (!window.SolanaWalletAdapter || !window.SolanaWalletAdapter.Base) {
-        throw new Error("Wallet Adapter SDK (UMD bundle) not loaded yet.");
-    }
-
-    const { WalletAdapterNetwork } = window.SolanaWalletAdapter.Base;
     const network = WalletAdapterNetwork.Mainnet;
 
     const wallets = [
-        new window.SolanaWalletAdapter.Wallets.PhantomWalletAdapter(),
-        new window.SolanaWalletAdapter.Wallets.BackpackWalletAdapter(),
-        new window.SolanaWalletAdapter.Wallets.SolflareWalletAdapter({ network }),
-        new window.SolanaWalletAdapter.Wallets.GlowWalletAdapter(),
-        new window.SolanaWalletAdapter.WalletConnect.WalletConnectWalletAdapter({
+        new PhantomWalletAdapter(),
+        new BackpackWalletAdapter(),
+        new SolflareWalletAdapter({ network }),
+        new GlowWalletAdapter(),
+        new WalletConnectWalletAdapter({
             network,
             options: {
                 relayUrl: "wss://relay.walletconnect.com",
-                projectId: "test" // Replace with your WC project ID
+                projectId: "test"
             }
         }),
-        new window.SolanaWalletAdapter.Mobile.WalletAdapterMobile({
+        new WalletAdapterMobile({
             appIdentity: { name: "MCAP App" },
             network
         })
     ];
 
-    const modal = new window.SolanaWalletAdapter.UI.WalletModal(wallets, {
+    const modal = new WalletModal(wallets, {
         container: document.getElementById("wallet-modal-root")
     });
 
@@ -167,41 +169,14 @@ async function initWalletAdapter() {
         }
     });
 
-    // Safe binding for wallet button
     waitForElement("connectWallet", (btn) => {
         btn.addEventListener("click", () => modal.show());
     });
 }
 
-// Run once DOM is ready and SDK loaded
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, starting SDK detection...");
-
-    let tries = 0;
-    const waitForSDK = setInterval(() => {
-        tries++;
-        console.log(`[SDK check #${tries}]`, {
-            SolanaWalletAdapter: typeof window.SolanaWalletAdapter,
-            Base: window.SolanaWalletAdapter?.Base ? "loaded" : "missing",
-            Wallets: window.SolanaWalletAdapter?.Wallets ? "loaded" : "missing",
-            WalletConnect: window.SolanaWalletAdapter?.WalletConnect ? "loaded" : "missing",
-            Mobile: window.SolanaWalletAdapter?.Mobile ? "loaded" : "missing",
-            UI: window.SolanaWalletAdapter?.UI ? "loaded" : "missing"
-        });
-
-        if (window.SolanaWalletAdapter && window.SolanaWalletAdapter.Base) {
-            clearInterval(waitForSDK);
-            console.log("✅ SDK detected, initializing wallet adapter...");
-            initWalletAdapter()
-                .then(() => console.log("initWalletAdapter finished"))
-                .catch(err => console.error("Wallet adapter init failed:", err));
-        }
-
-        if (tries > 50) { // ~5 seconds
-            clearInterval(waitForSDK);
-            console.error("❌ SDK not detected after 5s. Check script load order / network errors.");
-        }
-    }, 100);
+    console.log("DOM loaded, initializing wallet adapter...");
+    initWalletAdapter().catch(err => console.error("Wallet adapter init failed:", err));
 });
 
 // Jupiter Swap integration
@@ -217,12 +192,12 @@ document.addEventListener("DOMContentLoaded", () => {
         jupInitPromise = window.Jupiter.init({
             displayMode: 'modal',
             formProps: {
-                initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
-                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
+                initialInputMint: 'So11111111111111111111111111111111111111112',
+                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk',
                 onConnectWallet: async () => {
                     if (!connectedWalletProvider) {
                         const btn = document.getElementById("connectWallet");
-                        if (btn) btn.click(); // open modal
+                        if (btn) btn.click();
                     }
                     return connectedWalletProvider;
                 }
@@ -231,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return jupInitPromise;
     }
 
-    // Safe binding for swap button
     waitForElement("openSwap", (swapBtn) => {
         swapBtn.addEventListener('click', async (e) => {
             e.preventDefault();
