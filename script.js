@@ -61,17 +61,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Render nicely
-      predictionResult.innerHTML = `
-        <div class="card">
-          <h3>Narrative Forecast</h3>
-          <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
-        </div>
-        ${jsonData ? `
-        <div class="card">
-          <h3>Forecast JSON</h3>
-          <pre>${JSON.stringify(jsonData, null, 2)}</pre>
-        </div>` : ""}
-      `;
+      // Narrative section
+let html = `
+  <div class="card">
+    <h3>Narrative Forecast</h3>
+    <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
+  </div>
+`;
+
+// Forecast cards
+if (jsonData && jsonData.forecasts) {
+  html += `
+    <div class="card">
+      <h3>Forecast Summary</h3>
+      <div class="forecast-grid">
+  `;
+
+  Object.entries(jsonData.forecasts).forEach(([period, values]) => {
+    html += `
+      <div class="forecast-card">
+        <h4>${period.toUpperCase()}</h4>
+        <p class="low">Low: $${values.low.toLocaleString()}</p>
+        <p class="base">Base: $${values.base.toLocaleString()}</p>
+        <p class="high">High: $${values.high.toLocaleString()}</p>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+}
+
+predictionResult.innerHTML = html;
 
     } catch (err) {
       predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
