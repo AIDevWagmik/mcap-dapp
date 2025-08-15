@@ -1,15 +1,14 @@
 :root {
-  --blue-bg: #bde9ff;     
   --blue-title: #2877cd;  
   --green-btn: #28a745;   
   --text-color: #000;
-  --page-bg: var(--blue-bg);
+  --page-bg: #ffffff;
 }
 
 /* Dark mode */
 html[data-theme="dark"] {
   --page-bg: #0f1724;
-  --text-color: #fff;
+  --text-color: #e8eef7;
 }
 
 body {
@@ -17,70 +16,95 @@ body {
   font-family: system-ui, sans-serif;
   background: var(--page-bg);
   color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-}
-
-.logo {
-  height: 44px;
-}
-
-main {
-  padding: 1rem;
-}
-
-h1, h2 {
+/* Floating theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
   background: var(--blue-title);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  text-align: center;
-  font-size: 1.2rem;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.28),
-              0 6px 14px rgba(0,0,0,.18);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Logo header */
+.app-header {
+  text-align: center;
+  padding: 1rem;
+}
+.logo {
+  height: 48px;
+}
+
+/* Card layout */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+html[data-theme="dark"] .card {
+  background: #1a2538;
+}
+
+/* Section titles (MCAP style) */
+.section-title {
+  background: var(--blue-title);
+  color: white;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Inputs & buttons */
+input {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+}
 button {
   background: var(--green-btn);
   color: white;
   border: none;
-  padding: 0.75rem 1rem;
   border-radius: 999px;
+  padding: 0.7rem;
   width: 100%;
-  margin-top: 0.5rem;
-  cursor: pointer;
   font-size: 1rem;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  cursor: pointer;
+}
+button:hover {
+  background: #23913c;
 }
 
-input {
-  width: 100%;
-  padding: 0.75rem;
+/* Disclaimer */
+.disclaimer {
+  font-size: 0.8rem;
+  color: gray;
   margin-top: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
 }
 
-.card {
-  background: white;
-  color: black;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-top: 1rem;
-}
-
-.hidden {
-  display: none;
-}
-
+/* Footer */
 footer {
   text-align: center;
   font-size: 0.8rem;
   padding: 1rem;
+  opacity: 0.8;
 }
