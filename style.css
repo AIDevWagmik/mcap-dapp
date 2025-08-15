@@ -18,7 +18,7 @@ html, body {
   background: var(--page-bg);
   color: var(--text-color);
   transition: background 0.3s, color 0.3s;
-  overflow: hidden; /* prevent vertical scroll on swipe layout */
+  overflow: hidden; /* lock scrolling for swipe layout */
 }
 
 /* Floating theme toggle */
@@ -38,7 +38,7 @@ html, body {
   z-index: 9999;
 }
 
-/* Logo header (optional, remove if not used) */
+/* Header (changes logo per screen) */
 .app-header {
   text-align: center;
   padding: 1rem;
@@ -94,7 +94,7 @@ button:hover {
   margin-top: 0.5rem;
 }
 
-/* Footer (optional, remove if not needed) */
+/* Footer (optional) */
 footer {
   text-align: center;
   font-size: 0.8rem;
@@ -108,7 +108,6 @@ footer {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 0.75rem;
 }
-
 .forecast-card {
   background: rgba(40, 119, 205, 0.1);
   border-radius: 8px;
@@ -116,7 +115,6 @@ footer {
   text-align: center;
   font-size: 0.9rem;
 }
-
 .forecast-card h4 {
   margin: 0 0 0.5rem;
   background: var(--blue-title);
@@ -124,49 +122,45 @@ footer {
   padding: 0.25rem;
   border-radius: 4px;
 }
-
 .forecast-card p {
   margin: 0.25rem 0;
 }
-
 .forecast-card .low {
-  color: #dc3545; /* red */
+  color: #dc3545;
 }
-
 .forecast-card .base {
-  color: #ffc107; /* yellow */
+  color: #ffc107;
 }
-
 .forecast-card .high {
-  color: #28a745; /* green */
+  color: #28a745;
 }
 
 /* Share buttons */
 #shareButtons {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 #shareButtons button {
-    background: var(--blue-title, #2877cd);
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 9999px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transition: background 0.2s ease, transform 0.2s ease;
+  background: var(--blue-title, #2877cd);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 #shareButtons button:hover {
-    background: #1f5da1;
-    transform: translateY(-1px);
+  background: #1f5da1;
+  transform: translateY(-1px);
 }
 #shareButtons.hidden {
-    display: none;
+  display: none;
 }
 
 /* Disclaimer modal */
@@ -204,7 +198,7 @@ footer {
 
 /* Swipe layout */
 #app {
-  padding-top: 70px;
+  padding-top: 70px; /* space for fixed header */
   display: flex;
   height: 100%;
   width: 300%; /* 3 screens wide */
@@ -212,6 +206,7 @@ footer {
 }
 .screen {
   flex: 0 0 100%;
+  height: 100%;
   padding: 1rem;
   box-sizing: border-box;
   display: flex;
@@ -219,7 +214,6 @@ footer {
   align-items: center;
   justify-content: flex-start;
   position: relative;
-  height: 100%;
 }
 .swipe-hint {
   position: absolute;
@@ -230,14 +224,15 @@ footer {
   color: rgba(255,255,255,0.7);
 }
 
+/* Jupiter swap container */
 #jupiterContainer {
   width: 100%;
-  max-width: 400px; /* keep it mobile-friendly */
+  max-width: 400px;
 }
 
+/* Prediction result text wrap */
 #predictionResult pre {
   white-space: pre-wrap;
-  word-wrap: break-word;
+  word-break: break-word;
   max-width: 100%;
 }
-
