@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     predictionResult.innerHTML = `<p>Loading prediction...</p>`;
 
     try {
-      const res = await fetch("http://localhost:3000/predict", {
+      const res = await fetch("https://mcap-backend.onrender.com/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
