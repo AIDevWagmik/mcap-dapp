@@ -146,3 +146,14 @@ footer {
 .forecast-card .high {
   color: #28a745; /* green */
 }
+
+.connect-wallet {
+  background: var(--blue-title);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  margin: 1rem auto;
+  display: block;
+}
