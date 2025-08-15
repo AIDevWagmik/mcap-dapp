@@ -105,18 +105,26 @@ let connectedWalletProvider = null;
 
 console.log("script.js loaded");
 
-// Helper: wait for element to exist
+// Helper: wait for element to exist (safe for early calls)
 function waitForElement(id, callback) {
-    const el = document.getElementById(id);
-    if (el) return callback(el);
-    const observer = new MutationObserver(() => {
+    function startObserving() {
         const el = document.getElementById(id);
-        if (el) {
-            observer.disconnect();
-            callback(el);
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+        if (el) return callback(el);
+        const observer = new MutationObserver(() => {
+            const el = document.getElementById(id);
+            if (el) {
+                observer.disconnect();
+                callback(el);
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.body) {
+        startObserving();
+    } else {
+        document.addEventListener("DOMContentLoaded", startObserving);
+    }
 }
 
 async function initWalletAdapter() {
@@ -220,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 })();
+
 
 
 if ("serviceWorker" in navigator) {
