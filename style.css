@@ -189,3 +189,25 @@ footer {
 .modal-content button:hover {
   background: #1f5da1;
 }
+
+#shareButtons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+#shareButtons button {
+    background: #2877cd;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+#shareButtons button:hover {
+    background: #1f5da1;
+}
+.hidden {
+    display: none;
+}
+
