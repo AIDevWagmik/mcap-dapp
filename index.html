@@ -1,44 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MCAP Dapp</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
 <body>
+  <!-- Floating theme toggle -->
+  <button id="themeToggle" class="theme-toggle">🌙</button>
 
   <!-- Header -->
   <header class="app-header">
     <img src="assets/logos/mcap-logo.png" alt="MCAP Logo" class="logo">
-    <button id="themeToggle" aria-label="Toggle Theme">🌙</button>
   </header>
 
-  <!-- Main Content -->
   <main>
-    <section class="prediction-section">
-      <h1>MCAP Predictor</h1>
-      <p class="disclaimer">
-        ⚠ Entertainment only – not financial advice.
-      </p>
-
+    <!-- Prediction Card -->
+    <div class="card">
+      <div class="section-title">MCAP Predictor</div>
       <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address">
       <button id="getPrediction">Get Prediction</button>
+      <div id="predictionResult" class="hidden"></div>
+      <p class="disclaimer">⚠ Entertainment only – not financial advice.</p>
+    </div>
 
-      <div id="predictionResult" class="card hidden"></div>
-    </section>
-
-    <section class="jupiter-section">
-      <h2>Swap with Jupiter</h2>
+    <!-- Jupiter Swap Card -->
+    <div class="card">
+      <div class="section-title">Swap with Jupiter</div>
       <button id="openSwap">Open Swap</button>
-    </section>
+    </div>
+
+    <!-- Wallet Tracking Card -->
+    <div class="card">
+      <div class="section-title">Wallet Tracking (Coming Soon)</div>
+      <p>Follow top wallets and see which tokens they buy.</p>
+    </div>
+
+    <!-- Social Share Card -->
+    <div class="card">
+      <div class="section-title">Share</div>
+      <button>Share on X</button>
+      <button>Share on Telegram</button>
+    </div>
   </main>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 MCAP Official – Caps gonna cap.</p>
+    © 2025 MCAP Official – Caps gonna cap.
   </footer>
 
   <script src="script.js"></script>
 </body>
-</html>
+
