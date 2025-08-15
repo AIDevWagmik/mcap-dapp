@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCAP Dapp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
+  <!-- Header -->
+  <header class="app-header">
+    <img src="assets/logos/mcap-logo.png" alt="MCAP Logo" class="logo">
+    <button id="themeToggle" aria-label="Toggle Theme">🌙</button>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section class="prediction-section">
+      <h1>MCAP Predictor</h1>
+      <p class="disclaimer">
+        ⚠ Entertainment only – not financial advice.
+      </p>
+
+      <input type="text" id="contractAddress" placeholder="Enter Solana Contract Address">
+      <button id="getPrediction">Get Prediction</button>
+
+      <div id="predictionResult" class="card hidden"></div>
+    </section>
+
+    <section class="jupiter-section">
+      <h2>Swap with Jupiter</h2>
+      <button id="openSwap">Open Swap</button>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 MCAP Official – Caps gonna cap.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
