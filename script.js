@@ -102,52 +102,83 @@ predictionResult.innerHTML = html;
 
 let connectedWallet = null;
 
-async function connectWallet() {
-  const { PhantomWalletAdapter } = solanaWalletAdapterWallets;
-  const wallet = new PhantomWalletAdapter();
+function detectWallets() {
+    const wallets = [];
 
-  try {
-    await wallet.connect();
-    connectedWallet = wallet.publicKey.toBase58();
-    document.getElementById("connectWallet").innerText =
-      `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-    console.log("Connected to wallet:", connectedWallet);
-  } catch (err) {
-    console.error("Wallet connection failed:", err);
-  }
+    if (window.solana?.isPhantom) {
+        wallets.push({ name: "Phantom", provider: window.solana });
+    }
+    if (window.solana?.isBackpack) {
+        wallets.push({ name: "Backpack", provider: window.solana });
+    }
+    if (window.solflare) {
+        wallets.push({ name: "Solflare", provider: window.solflare });
+    }
+
+    return wallets;
+}
+
+async function connectWallet() {
+    const wallets = detectWallets();
+
+    if (wallets.length === 0) {
+        alert("No supported wallets found. Please install Phantom, Backpack, or Solflare.");
+        return;
+    }
+
+    let walletChoice;
+    if (wallets.length === 1) {
+        walletChoice = wallets[0];
+    } else {
+        const choiceName = prompt(`Select a wallet: ${wallets.map(w => w.name).join(", ")}`);
+        walletChoice = wallets.find(w => w.name.toLowerCase() === choiceName?.toLowerCase());
+        if (!walletChoice) {
+            alert("Invalid choice.");
+            return;
+        }
+    }
+
+    try {
+        const resp = await walletChoice.provider.connect();
+        connectedWallet = resp.publicKey.toString();
+        document.getElementById("connectWallet").innerText =
+            `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+        console.log(`Connected to ${walletChoice.name}:`, connectedWallet);
+    } catch (err) {
+        console.error(`${walletChoice.name} connection failed:`, err);
+    }
 }
 
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
 
 // Jupiter Swap integration
 (function(){
-  let jupInited = false;
-  let jupInitPromise = null;
+    let jupInited = false;
+    let jupInitPromise = null;
 
-  function ensureJupiter(){
-    if (jupInited) return jupInitPromise;
-    if (!window.Jupiter) return Promise.reject(new Error('Jupiter not loaded'));
+    function ensureJupiter(){
+        if (jupInited) return jupInitPromise;
+        if (!window.Jupiter) return Promise.reject(new Error('Jupiter not loaded'));
 
-    jupInited = true;
-    jupInitPromise = window.Jupiter.init({
-      displayMode: 'modal',
-      formProps: {
-        initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
-        initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
-        onConnectWallet: connectWallet // wallet connect function
-      }
-    });
-    return jupInitPromise;
-  }
-
-  document.getElementById('openSwap').addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-      await ensureJupiter();
-      if (window.Jupiter?.resume) window.Jupiter.resume();
-    } catch(err) {
-      console.error('Jupiter not ready:', err);
+        jupInited = true;
+        jupInitPromise = window.Jupiter.init({
+            displayMode: 'modal',
+            formProps: {
+                initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
+                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
+                onConnectWallet: connectWallet
+            }
+        });
+        return jupInitPromise;
     }
-  });
-})();
 
+    document.getElementById('openSwap').addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            await ensureJupiter();
+            if (window.Jupiter?.resume) window.Jupiter.resume();
+        } catch(err) {
+            console.error('Jupiter not ready:', err);
+        }
+    });
+})();
