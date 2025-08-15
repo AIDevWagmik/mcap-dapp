@@ -101,8 +101,9 @@ predictionResult.innerHTML = html;
 });
 
 let connectedWallet = null;
+let connectedWalletProvider = null; // track provider for Jupiter
 
-function detectWallets() {
+function detectInjectedWallets() {
     const wallets = [];
 
     if (window.solana?.isPhantom) {
@@ -119,39 +120,63 @@ function detectWallets() {
 }
 
 async function connectWallet() {
-    const wallets = detectWallets();
+    const injectedWallets = detectInjectedWallets();
 
-    if (wallets.length === 0) {
-        alert("No supported wallets found. Please install Phantom, Backpack, or Solflare.");
-        return;
-    }
+    if (injectedWallets.length > 0) {
+        // Desktop / injected connection
+        let walletChoice;
+        if (injectedWallets.length === 1) {
+            walletChoice = injectedWallets[0];
+        } else {
+            const choiceName = prompt(`Select a wallet: ${injectedWallets.map(w => w.name).join(", ")}`);
+            walletChoice = injectedWallets.find(w => w.name.toLowerCase() === choiceName?.toLowerCase());
+            if (!walletChoice) {
+                alert("Invalid choice.");
+                return;
+            }
+        }
 
-    let walletChoice;
-    if (wallets.length === 1) {
-        walletChoice = wallets[0];
-    } else {
-        const choiceName = prompt(`Select a wallet: ${wallets.map(w => w.name).join(", ")}`);
-        walletChoice = wallets.find(w => w.name.toLowerCase() === choiceName?.toLowerCase());
-        if (!walletChoice) {
-            alert("Invalid choice.");
+        try {
+            const resp = await walletChoice.provider.connect();
+            connectedWallet = resp.publicKey.toString();
+            connectedWalletProvider = walletChoice.provider;
+            document.getElementById("connectWallet").innerText =
+                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            console.log(`Connected to ${walletChoice.name}:`, connectedWallet);
             return;
+        } catch (err) {
+            console.error(`${walletChoice.name} connection failed:`, err);
         }
     }
 
+    // Mobile fallback → Solana Mobile Wallet Adapter
     try {
-        const resp = await walletChoice.provider.connect();
-        connectedWallet = resp.publicKey.toString();
-        document.getElementById("connectWallet").innerText =
-            `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-        console.log(`Connected to ${walletChoice.name}:`, connectedWallet);
+        const mwa = window["solanaMobileWalletAdapter"];
+        if (!mwa) {
+            alert("No mobile wallet adapter available. Install a supported wallet app.");
+            return;
+        }
+
+        const session = await mwa.connect();
+        if (session && session.publicKey) {
+            connectedWallet = session.publicKey;
+            connectedWalletProvider = mwa;
+            document.getElementById("connectWallet").innerText =
+                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            console.log("Connected via Mobile Wallet Adapter:", connectedWallet);
+        } else {
+            alert("Failed to connect to mobile wallet.");
+        }
     } catch (err) {
-        console.error(`${walletChoice.name} connection failed:`, err);
+        console.error("Mobile Wallet Adapter connection failed:", err);
     }
 }
 
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
 
+// =========================
 // Jupiter Swap integration
+// =========================
 (function(){
     let jupInited = false;
     let jupInitPromise = null;
@@ -166,7 +191,12 @@ document.getElementById("connectWallet").addEventListener("click", connectWallet
             formProps: {
                 initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
                 initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
-                onConnectWallet: connectWallet
+                onConnectWallet: async () => {
+                    if (!connectedWallet) {
+                        await connectWallet();
+                    }
+                    return connectedWalletProvider; // Pass provider to Jupiter
+                }
             }
         });
         return jupInitPromise;
@@ -182,6 +212,7 @@ document.getElementById("connectWallet").addEventListener("click", connectWallet
         }
     });
 })();
+
 
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
