@@ -106,8 +106,12 @@ let connectedWalletProvider = null;
 console.log("script.js loaded");
 
 async function initWalletAdapter() {
+    if (!window.solanaWalletAdapterBase) {
+        throw new Error("Wallet Adapter SDK not loaded yet.");
+    }
+
     const { WalletAdapterNetwork } = solanaWalletAdapterBase;
-    const network = WalletAdapterNetwork.Mainnet; // or Devnet for testing
+    const network = WalletAdapterNetwork.Mainnet;
 
     const wallets = [
         new solanaWalletAdapterWallets.PhantomWalletAdapter(),
@@ -146,8 +150,22 @@ async function initWalletAdapter() {
     });
 }
 
-// Initialize wallet adapter on page load
-document.addEventListener("DOMContentLoaded", initWalletAdapter);
+// Run once DOM is ready and SDK loaded
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded, waiting for SDK...");
+
+    const waitForSDK = setInterval(() => {
+        if (window.solanaWalletAdapterBase) {
+            clearInterval(waitForSDK);
+            console.log("SDK detected, initializing wallet adapter...");
+            initWalletAdapter().then(() => {
+                console.log("initWalletAdapter finished");
+            }).catch(err => {
+                console.error("Wallet adapter init failed:", err);
+            });
+        }
+    }, 100);
+});
 
 // Jupiter Swap integration
 (function(){
@@ -195,13 +213,3 @@ if ("serviceWorker" in navigator) {
             .catch((err) => console.error("Service Worker registration failed:", err));
     });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, calling initWalletAdapter()");
-    try {
-        initWalletAdapter();
-        console.log("initWalletAdapter finished");
-    } catch (err) {
-        console.error("Wallet adapter init failed:", err);
-    }
-});
