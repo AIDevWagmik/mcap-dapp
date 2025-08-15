@@ -100,4 +100,33 @@ predictionResult.innerHTML = html;
   });
 });
 
+// Jupiter Swap integration
+(function(){
+  let jupInited = false;
+  let jupInitPromise = null;
 
+  function ensureJupiter(){
+    if (jupInited) return jupInitPromise;
+    if (!window.Jupiter) return Promise.reject(new Error('Jupiter not loaded'));
+
+    jupInited = true;
+    jupInitPromise = window.Jupiter.init({
+      displayMode: 'modal',
+      formProps: {
+        initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
+        initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk' // Example: MCAP token mint
+      }
+    });
+    return jupInitPromise;
+  }
+
+  document.getElementById('openSwap').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await ensureJupiter();
+      if (window.Jupiter?.resume) window.Jupiter.resume();
+    } catch(err) {
+      console.error('Jupiter not ready:', err);
+    }
+  });
+})();
