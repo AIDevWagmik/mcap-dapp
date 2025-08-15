@@ -103,6 +103,8 @@ predictionResult.innerHTML = html;
 let connectedWallet = null;
 let connectedWalletProvider = null;
 
+console.log("script.js loaded");
+
 async function initWalletAdapter() {
     const { WalletAdapterNetwork } = solanaWalletAdapterBase;
     const network = WalletAdapterNetwork.Mainnet; // or Devnet for testing
@@ -193,3 +195,13 @@ if ("serviceWorker" in navigator) {
             .catch((err) => console.error("Service Worker registration failed:", err));
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded, calling initWalletAdapter()");
+    try {
+        initWalletAdapter();
+        console.log("initWalletAdapter finished");
+    } catch (err) {
+        console.error("Wallet adapter init failed:", err);
+    }
+});
