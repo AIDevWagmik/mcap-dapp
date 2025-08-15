@@ -175,18 +175,34 @@ async function initWalletAdapter() {
 
 // Run once DOM is ready and SDK loaded
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, waiting for SDK...");
+    console.log("DOM loaded, starting SDK detection...");
 
+    let tries = 0;
     const waitForSDK = setInterval(() => {
+        tries++;
+        console.log(`[SDK check #${tries}]`, {
+            base: typeof window.solanaWalletAdapterBase,
+            wallets: typeof window.solanaWalletAdapterWallets,
+            wc: typeof window.solanaWalletAdapterWalletconnect,
+            mobile: typeof window.solanaMobileWalletAdapter,
+            ui: typeof window.solanaWalletAdapterUI
+        });
+
         if (window.solanaWalletAdapterBase) {
             clearInterval(waitForSDK);
-            console.log("SDK detected, initializing wallet adapter...");
+            console.log("✅ SDK detected, initializing wallet adapter...");
             initWalletAdapter()
                 .then(() => console.log("initWalletAdapter finished"))
                 .catch(err => console.error("Wallet adapter init failed:", err));
         }
+
+        if (tries > 50) { // ~5 seconds
+            clearInterval(waitForSDK);
+            console.error("❌ SDK not detected after 5s. Check script load order / network errors.");
+        }
     }, 100);
 });
+
 
 // Jupiter Swap integration
 (function(){
