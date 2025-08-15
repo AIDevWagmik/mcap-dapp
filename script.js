@@ -100,6 +100,25 @@ predictionResult.innerHTML = html;
   });
 });
 
+let connectedWallet = null;
+
+async function connectWallet() {
+  const { PhantomWalletAdapter } = solanaWalletAdapterWallets;
+  const wallet = new PhantomWalletAdapter();
+
+  try {
+    await wallet.connect();
+    connectedWallet = wallet.publicKey.toBase58();
+    document.getElementById("connectWallet").innerText =
+      `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+    console.log("Connected to wallet:", connectedWallet);
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+  }
+}
+
+document.getElementById("connectWallet").addEventListener("click", connectWallet);
+
 // Jupiter Swap integration
 (function(){
   let jupInited = false;
@@ -114,7 +133,8 @@ predictionResult.innerHTML = html;
       displayMode: 'modal',
       formProps: {
         initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
-        initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk' // Example: MCAP token mint
+        initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
+        onConnectWallet: connectWallet // wallet connect function
       }
     });
     return jupInitPromise;
@@ -130,3 +150,4 @@ predictionResult.innerHTML = html;
     }
   });
 })();
+
