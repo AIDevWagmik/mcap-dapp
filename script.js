@@ -145,9 +145,14 @@ async function initWalletAdapter() {
         }
     });
 
-    document.getElementById("connectWallet").addEventListener("click", () => {
-        modal.show();
-    });
+    // Wait until the button exists before binding
+    const btnCheck = setInterval(() => {
+        const btn = document.getElementById("connectWallet");
+        if (btn) {
+            clearInterval(btnCheck);
+            btn.addEventListener("click", () => modal.show());
+        }
+    }, 100);
 }
 
 // Run once DOM is ready and SDK loaded
@@ -158,11 +163,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.solanaWalletAdapterBase) {
             clearInterval(waitForSDK);
             console.log("SDK detected, initializing wallet adapter...");
-            initWalletAdapter().then(() => {
-                console.log("initWalletAdapter finished");
-            }).catch(err => {
-                console.error("Wallet adapter init failed:", err);
-            });
+            initWalletAdapter()
+                .then(() => console.log("initWalletAdapter finished"))
+                .catch(err => console.error("Wallet adapter init failed:", err));
         }
     }, 100);
 });
