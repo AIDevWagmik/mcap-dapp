@@ -1,27 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
+    /* -----------------
+       Disclaimer Modal
+    -------------------*/
     const disclaimerModal = document.getElementById("disclaimerModal");
     const acceptBtn = document.getElementById("acceptDisclaimer");
 
-    // Check if user already accepted
     if (localStorage.getItem("disclaimerAccepted") === "true") {
         disclaimerModal.style.display = "none";
     } else {
         disclaimerModal.style.display = "flex";
     }
 
-    // Accept button click
     acceptBtn.addEventListener("click", () => {
         localStorage.setItem("disclaimerAccepted", "true");
         disclaimerModal.style.display = "none";
     });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
+    /* -----------------
+       Theme Toggle
+    -------------------*/
     const themeToggle = document.getElementById("themeToggle");
-    const predictionBtn = document.getElementById("getPrediction");
-    const predictionResult = document.getElementById("predictionResult");
-
-    // Theme toggle
     if (localStorage.getItem("theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
         themeToggle.textContent = "☀️";
@@ -40,7 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Prediction
+    /* -----------------
+       Prediction Fetch
+    -------------------*/
+    const predictionBtn = document.getElementById("getPrediction");
+    const predictionResult = document.getElementById("predictionResult");
+
     predictionBtn.addEventListener("click", async () => {
         const addr = document.getElementById("contractAddress").value.trim();
         if (!addr) {
@@ -76,56 +79,53 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let html = `
-    <div>
-        <h3 class="section-title">Narrative Forecast</h3>
-        <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
-    </div>
-`;
+                <div>
+                    <h3 class="section-title">Narrative Forecast</h3>
+                    <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
+                </div>
+            `;
 
-if (jsonData && jsonData.forecasts) {
-    html += `<div><h3 class="section-title">Forecast Summary</h3><div class="forecast-grid">`;
-    Object.entries(jsonData.forecasts).forEach(([period, values]) => {
-        html += `
-            <div class="forecast-card">
-                <h4>${period.toUpperCase()}</h4>
-                <p class="low">Low: $${values.low.toLocaleString()}</p>
-                <p class="base">Base: $${values.base.toLocaleString()}</p>
-                <p class="high">High: $${values.high.toLocaleString()}</p>
-            </div>
-        `;
-    });
-    html += `</div></div>`;
-}
+            if (jsonData && jsonData.forecasts) {
+                html += `<div><h3 class="section-title">Forecast Summary</h3><div class="forecast-grid">`;
+                Object.entries(jsonData.forecasts).forEach(([period, values]) => {
+                    html += `
+                        <div class="forecast-card">
+                            <h4>${period.toUpperCase()}</h4>
+                            <p class="low">Low: $${values.low.toLocaleString()}</p>
+                            <p class="base">Base: $${values.base.toLocaleString()}</p>
+                            <p class="high">High: $${values.high.toLocaleString()}</p>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-predictionResult.innerHTML = html;
+            predictionResult.innerHTML = html;
 
+            // Show share buttons
+            const shareDiv = document.getElementById("shareButtons");
+            shareDiv.classList.remove("hidden");
 
-  // Show share buttons after prediction loads
-const shareDiv = document.getElementById("shareButtons");
-shareDiv.classList.remove("hidden");
+            const shareMessage = "Just used the MCAP app from @mcapmovement using XAI (Grok 4) — try it for yourself with any token address.";
+            document.getElementById("shareX").onclick = () => {
+                const text = encodeURIComponent(shareMessage);
+                window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+            };
+            document.getElementById("shareTelegram").onclick = () => {
+                const text = encodeURIComponent(shareMessage);
+                window.open(`https://t.me/share/url?text=${text}`, '_blank');
+            };
 
-const shareMessage = "Just used the MCAP app from @mcapmovement using XAI (Grok 4) — try it for yourself with any token address.";
-
-document.getElementById("shareX").onclick = () => {
-    const text = encodeURIComponent(shareMessage);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-};
-
-document.getElementById("shareTelegram").onclick = () => {
-    const text = encodeURIComponent(shareMessage);
-    window.open(`https://t.me/share/url?text=${text}`, '_blank');
-};
-
-} catch (err) {
-    predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
-    console.error(err);
-}
+        } catch (err) {
+            predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
+            console.error(err);
+        }
     });
 });
 
-// -----------------
-// Jupiter Swap Integration
-// -----------------
+/* -----------------
+   Jupiter Swap Integration
+-------------------*/
 (function(){
     let jupInited = false;
     let jupInitPromise = null;
@@ -136,11 +136,11 @@ document.getElementById("shareTelegram").onclick = () => {
 
         jupInited = true;
         jupInitPromise = window.Jupiter.init({
-         displayMode: 'integrated',
-         container: document.getElementById('jupiterContainer'),
-         formProps: {
-                initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
-                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk' // MCAP token
+            displayMode: 'integrated',
+            container: document.getElementById('jupiterContainer'),
+            formProps: {
+                initialInputMint: 'So11111111111111111111111111111111111111112',
+                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk'
             }
         });
         return jupInitPromise;
@@ -162,9 +162,9 @@ document.getElementById("shareTelegram").onclick = () => {
     });
 })();
 
-// -----------------
-// Service Worker
-// -----------------
+/* -----------------
+   Service Worker
+-------------------*/
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker
@@ -174,65 +174,44 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-// -----------------
-// Swipe Navigation
-// -----------------
+/* -----------------
+   Swipe Navigation + Header Logo
+-------------------*/
 let currentScreen = 0;
 const totalScreens = 3;
 let startX = 0;
 
 const app = document.getElementById('app');
-
-app.addEventListener('touchstart', e => {
-  startX = e.touches[0].clientX;
-});
-
-app.addEventListener('touchend', e => {
-  const endX = e.changedTouches[0].clientX;
-  const deltaX = startX - endX;
-
-  if (Math.abs(deltaX) > 50) { // swipe threshold
-    if (deltaX > 0 && currentScreen < totalScreens - 1) {
-      currentScreen++;
-    } else if (deltaX < 0 && currentScreen > 0) {
-      currentScreen--;
-    }
-    app.style.transform = `translateX(-${currentScreen * 100}%)`;
-  }
-});
-
 const headerLogo = document.getElementById("header-logo");
-
-// Map each screen index to its PNG
 const headerImages = [
-  "assets/logos/logo1.png", // Prediction screen
-  "assets/logos/logo2.png", // Jupiter Swap screen
-  "assets/logos/logo3.png"  // Wallet Tracking screen
+    "assets/logos/logo1.png", // Prediction screen
+    "assets/logos/logo2.png", // Jupiter Swap screen
+    "assets/logos/logo3.png"  // Wallet Tracking screen
 ];
 
 function updateHeaderLogo(index) {
-  headerLogo.src = headerImages[index];
+    headerLogo.src = headerImages[index];
 }
 
-// Call when swipe changes
 function goToScreen(index) {
-  currentScreen = index;
-  app.style.transform = `translateX(-${currentScreen * 100}%)`;
-  updateHeaderLogo(currentScreen);
+    currentScreen = index;
+    app.style.transform = `translateX(-${currentScreen * 100}%)`;
+    updateHeaderLogo(currentScreen);
 }
 
-// Update swipe logic to use goToScreen
-app.addEventListener('touchend', e => {
-  const endX = e.changedTouches[0].clientX;
-  const deltaX = startX - endX;
-
-  if (Math.abs(deltaX) > 50) {
-    if (deltaX > 0 && currentScreen < totalScreens - 1) {
-      goToScreen(currentScreen + 1);
-    } else if (deltaX < 0 && currentScreen > 0) {
-      goToScreen(currentScreen - 1);
-    }
-  }
+app.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
 });
 
+app.addEventListener('touchend', e => {
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = startX - endX;
 
+    if (Math.abs(deltaX) > 50) {
+        if (deltaX > 0 && currentScreen < totalScreens - 1) {
+            goToScreen(currentScreen + 1);
+        } else if (deltaX < 0 && currentScreen > 0) {
+            goToScreen(currentScreen - 1);
+        }
+    }
+});
