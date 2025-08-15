@@ -1,30 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("themeToggle");
-  const body = document.documentElement;
   const predictionBtn = document.getElementById("getPrediction");
   const predictionResult = document.getElementById("predictionResult");
 
   // Load saved theme
   if (localStorage.getItem("theme") === "dark") {
-    body.setAttribute("data-theme", "dark");
+    document.documentElement.setAttribute("data-theme", "dark");
     themeToggle.textContent = "☀️";
   }
 
-  // Theme toggle
   themeToggle.addEventListener("click", () => {
-    const isDark = body.getAttribute("data-theme") === "dark";
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
     if (isDark) {
-      body.removeAttribute("data-theme");
+      document.documentElement.removeAttribute("data-theme");
       themeToggle.textContent = "🌙";
       localStorage.setItem("theme", "light");
     } else {
-      body.setAttribute("data-theme", "dark");
+      document.documentElement.setAttribute("data-theme", "dark");
       themeToggle.textContent = "☀️";
       localStorage.setItem("theme", "dark");
     }
   });
 
-  // Prediction (mock until API connected)
+  // Mock prediction until API is ready
   predictionBtn.addEventListener("click", () => {
     const addr = document.getElementById("contractAddress").value.trim();
     if (!addr) {
@@ -33,14 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     predictionResult.classList.remove("hidden");
     predictionResult.innerHTML = `
-      <h3>Forecast for ${addr}</h3>
-      <p>Low: $5M – Base: $10M – High: $20M</p>
-      <small>⚠ Entertainment only – not financial advice.</small>
+      <p><strong>Low:</strong> $5M</p>
+      <p><strong>Base:</strong> $10M</p>
+      <p><strong>High:</strong> $20M</p>
     `;
   });
-
-  // Jupiter swap placeholder
-  document.getElementById("openSwap").addEventListener("click", () => {
-    alert("Jupiter swap integration coming soon!");
-  });
 });
+
