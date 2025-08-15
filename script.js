@@ -105,6 +105,20 @@ let connectedWalletProvider = null;
 
 console.log("script.js loaded");
 
+// Helper: wait for element to exist
+function waitForElement(id, callback) {
+    const el = document.getElementById(id);
+    if (el) return callback(el);
+    const observer = new MutationObserver(() => {
+        const el = document.getElementById(id);
+        if (el) {
+            observer.disconnect();
+            callback(el);
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
 async function initWalletAdapter() {
     if (!window.solanaWalletAdapterBase) {
         throw new Error("Wallet Adapter SDK not loaded yet.");
@@ -145,14 +159,10 @@ async function initWalletAdapter() {
         }
     });
 
-    // Wait until the button exists before binding
-    const btnCheck = setInterval(() => {
-        const btn = document.getElementById("connectWallet");
-        if (btn) {
-            clearInterval(btnCheck);
-            btn.addEventListener("click", () => modal.show());
-        }
-    }, 100);
+    // Safe binding for wallet button
+    waitForElement("connectWallet", (btn) => {
+        btn.addEventListener("click", () => modal.show());
+    });
 }
 
 // Run once DOM is ready and SDK loaded
@@ -187,7 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
                 onConnectWallet: async () => {
                     if (!connectedWalletProvider) {
-                        document.getElementById("connectWallet").click(); // open modal
+                        const btn = document.getElementById("connectWallet");
+                        if (btn) btn.click(); // open modal
                     }
                     return connectedWalletProvider;
                 }
@@ -196,14 +207,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return jupInitPromise;
     }
 
-    document.getElementById('openSwap').addEventListener('click', async (e) => {
-        e.preventDefault();
-        try {
-            await ensureJupiter();
-            if (window.Jupiter?.resume) window.Jupiter.resume();
-        } catch(err) {
-            console.error('Jupiter not ready:', err);
-        }
+    // Safe binding for swap button
+    waitForElement("openSwap", (swapBtn) => {
+        swapBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await ensureJupiter();
+                if (window.Jupiter?.resume) window.Jupiter.resume();
+            } catch(err) {
+                console.error('Jupiter not ready:', err);
+            }
+        });
     });
 })();
 
