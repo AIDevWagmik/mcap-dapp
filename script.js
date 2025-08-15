@@ -1,12 +1,3 @@
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker
-            .register("/service-worker.js")
-            .then((reg) => console.log("Service Worker registered:", reg.scope))
-            .catch((err) => console.error("Service Worker registration failed:", err));
-    });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("themeToggle");
   const predictionBtn = document.getElementById("getPrediction");
@@ -191,3 +182,12 @@ document.getElementById("connectWallet").addEventListener("click", connectWallet
         }
     });
 })();
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker
+            .register("service-worker.js") // ✅ relative path, works in subfolder
+            .then((reg) => console.log("Service Worker registered:", reg.scope))
+            .catch((err) => console.error("Service Worker registration failed:", err));
+    });
+}
