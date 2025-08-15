@@ -76,28 +76,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let html = `
-                <div class="card">
-                    <h3>Narrative Forecast</h3>
-                    <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
-                </div>
-            `;
+    <div>
+        <h3 class="section-title">Narrative Forecast</h3>
+        <pre>${aiText.replace(/```json[\s\S]*```/, "").trim()}</pre>
+    </div>
+`;
 
-            if (jsonData && jsonData.forecasts) {
-                html += `<div class="card"><h3>Forecast Summary</h3><div class="forecast-grid">`;
-                Object.entries(jsonData.forecasts).forEach(([period, values]) => {
-                    html += `
-                        <div class="forecast-card">
-                            <h4>${period.toUpperCase()}</h4>
-                            <p class="low">Low: $${values.low.toLocaleString()}</p>
-                            <p class="base">Base: $${values.base.toLocaleString()}</p>
-                            <p class="high">High: $${values.high.toLocaleString()}</p>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            }
+if (jsonData && jsonData.forecasts) {
+    html += `<div><h3 class="section-title">Forecast Summary</h3><div class="forecast-grid">`;
+    Object.entries(jsonData.forecasts).forEach(([period, values]) => {
+        html += `
+            <div class="forecast-card">
+                <h4>${period.toUpperCase()}</h4>
+                <p class="low">Low: $${values.low.toLocaleString()}</p>
+                <p class="base">Base: $${values.base.toLocaleString()}</p>
+                <p class="high">High: $${values.high.toLocaleString()}</p>
+            </div>
+        `;
+    });
+    html += `</div></div>`;
+}
 
-            predictionResult.innerHTML = html;
+predictionResult.innerHTML = html;
+
 
   // Show share buttons after prediction loads
 const shareDiv = document.getElementById("shareButtons");
