@@ -9,15 +9,18 @@
   <!-- Jupiter Plugin -->
 <script src="https://plugin.jup.ag/plugin-v1.js" data-preload defer></script>
 
-<!-- Solana Wallet Adapter -->
+<!-- Solana Web3.js -->
 <script src="https://unpkg.com/@solana/web3.js@1.87.0/lib/index.iife.min.js"></script>
 
-<!-- Solana Mobile Wallet Adapter -->
+<!-- Solana Wallet Adapter SDK (UMD builds) -->
+<script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.22/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.1.15/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-walletconnect@0.1.5/lib/cdn.js"></script>
 <script src="https://unpkg.com/@solana-mobile/wallet-adapter-mobile@1.0.0/dist/index.umd.js"></script>
 
-<!-- WalletConnect for Solana -->
-<script src="https://unpkg.com/@walletconnect/client@2.11.0/dist/index.umd.min.js"></script>
-<script src="https://unpkg.com/@walletconnect/qrcode-modal@1.8.0/dist/umd/index.min.js"></script>
+<!-- Wallet Adapter UI (Modal) -->
+<link rel="stylesheet" href="https://unpkg.com/@solana/wallet-adapter-ui/styles.css" />
+<script src="https://unpkg.com/@solana/wallet-adapter-ui/lib/cdn.js"></script>
 
 </head>
 <body>
@@ -25,6 +28,9 @@
   <button id="themeToggle" class="theme-toggle">🌙</button>
 
   <button id="connectWallet" class="connect-wallet">Connect Wallet</button>
+
+  <!-- Wallet Adapter Modal -->
+<div id="wallet-modal-root"></div>
 
   <!-- Header -->
   <header class="app-header">
