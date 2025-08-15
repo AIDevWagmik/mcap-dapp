@@ -98,10 +98,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             predictionResult.innerHTML = html;
-        } catch (err) {
-            predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
-            console.error(err);
-        }
+
+    // === Share Buttons Logic ===
+    const shareDiv = document.getElementById("shareButtons");
+    shareDiv.classList.remove("hidden");
+
+    document.getElementById("shareX").onclick = () => {
+        const text = encodeURIComponent(`Check out this MCAP prediction:\n${window.location.href}`);
+        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    };
+
+    document.getElementById("shareTelegram").onclick = () => {
+        const text = encodeURIComponent(`Check out this MCAP prediction:\n${window.location.href}`);
+        window.open(`https://t.me/share/url?url=${text}`, '_blank');
+    };
+
+} catch (err) {
+    predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
+    console.error(err);
+}
     });
 });
 
