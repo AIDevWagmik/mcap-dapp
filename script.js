@@ -101,7 +101,7 @@ predictionResult.innerHTML = html;
 });
 
 let connectedWallet = null;
-let connectedWalletProvider = null; // track provider for Jupiter
+let connectedWalletProvider = null; // for Jupiter
 
 function detectInjectedWallets() {
     const wallets = [];
@@ -122,8 +122,8 @@ function detectInjectedWallets() {
 async function connectWallet() {
     const injectedWallets = detectInjectedWallets();
 
+    // 1. Desktop injected wallets
     if (injectedWallets.length > 0) {
-        // Desktop / injected connection
         let walletChoice;
         if (injectedWallets.length === 1) {
             walletChoice = injectedWallets[0];
@@ -149,30 +149,54 @@ async function connectWallet() {
         }
     }
 
-    // Mobile fallback → Solana Mobile Wallet Adapter
+    // 2. APK / Solana Mobile Wallet Adapter
     try {
         const mwa = window["solanaMobileWalletAdapter"];
-        if (!mwa) {
-            alert("No mobile wallet adapter available. Install a supported wallet app.");
-            return;
-        }
-
-        const session = await mwa.connect();
-        if (session && session.publicKey) {
-            connectedWallet = session.publicKey;
-            connectedWalletProvider = mwa;
-            document.getElementById("connectWallet").innerText =
-                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-            console.log("Connected via Mobile Wallet Adapter:", connectedWallet);
-        } else {
-            alert("Failed to connect to mobile wallet.");
+        if (mwa) {
+            const session = await mwa.connect();
+            if (session && session.publicKey) {
+                connectedWallet = session.publicKey;
+                connectedWalletProvider = mwa;
+                document.getElementById("connectWallet").innerText =
+                    `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+                console.log("Connected via Mobile Wallet Adapter:", connectedWallet);
+                return;
+            }
         }
     } catch (err) {
         console.error("Mobile Wallet Adapter connection failed:", err);
     }
+
+    // 3. Mobile browser → WalletConnect fallback
+    try {
+        console.log("Falling back to WalletConnect...");
+        const connector = new window.WalletConnect.default({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: window.WalletConnectQRCodeModal
+        });
+
+        if (!connector.connected) {
+            await connector.createSession();
+        }
+
+        connector.on("connect", (error, payload) => {
+            if (error) throw error;
+            const { accounts } = payload.params[0];
+            connectedWallet = accounts[0];
+            connectedWalletProvider = connector;
+            document.getElementById("connectWallet").innerText =
+                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            console.log("Connected via WalletConnect:", connectedWallet);
+        });
+
+    } catch (err) {
+        console.error("WalletConnect connection failed:", err);
+        alert("No supported wallet found. Please install Phantom, Backpack, or Solflare.");
+    }
 }
 
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
+
 
 // =========================
 // Jupiter Swap integration
