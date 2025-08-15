@@ -103,101 +103,51 @@ predictionResult.innerHTML = html;
 let connectedWallet = null;
 let connectedWalletProvider = null;
 
-function detectInjectedWallets() {
-    const wallets = [];
-    if (window.solana?.isPhantom) wallets.push({ name: "Phantom", provider: window.solana });
-    if (window.solana?.isBackpack) wallets.push({ name: "Backpack", provider: window.solana });
-    if (window.solflare) wallets.push({ name: "Solflare", provider: window.solflare });
-    return wallets;
-}
+async function initWalletAdapter() {
+    const { WalletAdapterNetwork } = solanaWalletAdapterBase;
+    const network = WalletAdapterNetwork.Mainnet; // or Devnet for testing
 
-async function connectWallet() {
-    const injectedWallets = detectInjectedWallets();
-
-    // 1. Injected wallets (desktop or wallet in-app browser)
-    if (injectedWallets.length > 0) {
-        let walletChoice = injectedWallets.length === 1
-            ? injectedWallets[0]
-            : injectedWallets.find(w => w.name.toLowerCase() === prompt(`Select a wallet: ${injectedWallets.map(w => w.name).join(", ")}`)?.toLowerCase());
-
-        if (!walletChoice) return;
-
-        try {
-            const resp = await walletChoice.provider.connect();
-            connectedWallet = resp.publicKey.toString();
-            connectedWalletProvider = walletChoice.provider;
-            document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-            console.log(`Connected to ${walletChoice.name}:`, connectedWallet);
-            return;
-        } catch (err) {
-            console.error(`${walletChoice.name} connection failed:`, err);
-        }
-    }
-
-    // 2. Mobile Wallet Adapter (APK / Solana Mobile)
-    try {
-        const mwa = window["solanaMobileWalletAdapter"];
-        if (mwa) {
-            const session = await mwa.connect();
-            if (session && session.publicKey) {
-                connectedWallet = session.publicKey;
-                connectedWalletProvider = mwa;
-                document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-                console.log("Connected via Mobile Wallet Adapter:", connectedWallet);
-                return;
+    const wallets = [
+        new solanaWalletAdapterWallets.PhantomWalletAdapter(),
+        new solanaWalletAdapterWallets.BackpackWalletAdapter(),
+        new solanaWalletAdapterWallets.SolflareWalletAdapter({ network }),
+        new solanaWalletAdapterWallets.GlowWalletAdapter(),
+        new solanaWalletAdapterWalletconnect.WalletConnectWalletAdapter({
+            network,
+            options: {
+                relayUrl: "wss://relay.walletconnect.com",
+                projectId: "test" // Replace with your WC project ID
             }
+        }),
+        new solanaMobileWalletAdapter.WalletAdapterMobile({
+            appIdentity: { name: "MCAP App" },
+            network
+        })
+    ];
+
+    const modal = new solanaWalletAdapterUI.WalletModal(wallets, {
+        container: document.getElementById("wallet-modal-root")
+    });
+
+    modal.on("connect", (wallet) => {
+        connectedWalletProvider = wallet.adapter;
+        connectedWallet = wallet.adapter.publicKey?.toBase58() || null;
+        if (connectedWallet) {
+            document.getElementById("connectWallet").innerText =
+                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            console.log(`Connected to wallet: ${connectedWallet}`);
         }
-    } catch (err) {
-        console.error("Mobile Wallet Adapter connection failed:", err);
-    }
+    });
 
-    // 3. WalletConnect with deep link (mobile browsers like Chrome/Safari)
-    const walletOptions = {
-        Phantom: "https://phantom.app/ul/browse/" + encodeURIComponent(window.location.href),
-        Solflare: "https://solflare.com/ul/browse/" + encodeURIComponent(window.location.href),
-        Backpack: "https://backpack.app/ul/browse/" + encodeURIComponent(window.location.href)
-    };
-
-    const choice = prompt(`Select a wallet: ${Object.keys(walletOptions).join(", ")}`);
-    if (!choice || !walletOptions[choice]) {
-        alert("Invalid wallet choice");
-        return;
-    }
-
-    try {
-        const connector = new window.WalletConnect.default({
-            bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: window.WalletConnectQRCodeModal
-        });
-
-        if (!connector.connected) {
-            await connector.createSession();
-        }
-
-        // For mobile: open wallet app via deep link
-        window.location.href = walletOptions[choice];
-
-        connector.on("connect", (error, payload) => {
-            if (error) throw error;
-            const { accounts } = payload.params[0];
-            connectedWallet = accounts[0];
-            connectedWalletProvider = connector;
-            document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-            console.log("Connected via WalletConnect (mobile):", connectedWallet);
-        });
-
-    } catch (err) {
-        console.error("WalletConnect connection failed:", err);
-        alert("Could not connect via WalletConnect");
-    }
+    document.getElementById("connectWallet").addEventListener("click", () => {
+        modal.show();
+    });
 }
 
-document.getElementById("connectWallet").addEventListener("click", connectWallet);
+// Initialize wallet adapter on page load
+document.addEventListener("DOMContentLoaded", initWalletAdapter);
 
-
-// =========================
 // Jupiter Swap integration
-// =========================
 (function(){
     let jupInited = false;
     let jupInitPromise = null;
@@ -213,10 +163,10 @@ document.getElementById("connectWallet").addEventListener("click", connectWallet
                 initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
                 initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk', // MCAP token mint
                 onConnectWallet: async () => {
-                    if (!connectedWallet) {
-                        await connectWallet();
+                    if (!connectedWalletProvider) {
+                        document.getElementById("connectWallet").click(); // open modal
                     }
-                    return connectedWalletProvider; // Pass provider to Jupiter
+                    return connectedWalletProvider;
                 }
             }
         });
