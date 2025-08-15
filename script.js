@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const disclaimerModal = document.getElementById("disclaimerModal");
+    const acceptBtn = document.getElementById("acceptDisclaimer");
+
+    // Check if user already accepted
+    if (localStorage.getItem("disclaimerAccepted") === "true") {
+        disclaimerModal.style.display = "none";
+    } else {
+        disclaimerModal.style.display = "flex";
+    }
+
+    // Accept button click
+    acceptBtn.addEventListener("click", () => {
+        localStorage.setItem("disclaimerAccepted", "true");
+        disclaimerModal.style.display = "none";
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("themeToggle");
     const predictionBtn = document.getElementById("getPrediction");
     const predictionResult = document.getElementById("predictionResult");
