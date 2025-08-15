@@ -12,11 +12,18 @@
 <!-- Solana Web3.js -->
 <script src="https://unpkg.com/@solana/web3.js@1.87.0/lib/index.iife.min.js"></script>
 
-<!-- Solana Wallet Adapter SDK (UMD builds) -->
-<script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.22/lib/cdn.js"></script>
-<script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.1.15/lib/cdn.js"></script>
-<script src="https://unpkg.com/@solana/wallet-adapter-walletconnect@0.1.5/lib/cdn.js"></script>
-<script src="https://unpkg.com/@solana-mobile/wallet-adapter-mobile@1.0.0/dist/index.umd.js"></script>
+<!-- Solana Wallet Adapter SDK scripts -->
+<script src="https://unpkg.com/@solana/wallet-adapter-base/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-wallets/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana/wallet-adapter-walletconnect/lib/cdn.js"></script>
+<script src="https://unpkg.com/@solana-mobile/wallet-adapter-mobile/lib/cdn.js"></script>
+
+<!-- Wallet Adapter UI (Modal) -->
+<link rel="stylesheet" href="https://unpkg.com/@solana/wallet-adapter-ui/styles.css" />
+<script src="https://unpkg.com/@solana/wallet-adapter-ui/lib/cdn.js"></script>
+
+<!-- Your script LAST -->
+<script src="script.js"></script>
 
 <!-- Wallet Adapter UI (Modal) -->
 <link rel="stylesheet" href="https://unpkg.com/@solana/wallet-adapter-ui/styles.css" />
@@ -76,8 +83,6 @@
     © 2025 MCAP Official – Caps gonna cap.
   </footer>
 
-  <!-- Main Script -->
-  <script src="script.js"></script>
 </body>
 </html>
 
