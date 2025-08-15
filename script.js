@@ -128,32 +128,32 @@ function waitForElement(id, callback) {
 }
 
 async function initWalletAdapter() {
-    if (!window.solanaWalletAdapterBase) {
-        throw new Error("Wallet Adapter SDK not loaded yet.");
+    if (!window.SolanaWalletAdapter || !window.SolanaWalletAdapter.Base) {
+        throw new Error("Wallet Adapter SDK (UMD bundle) not loaded yet.");
     }
 
-   const { WalletAdapterNetwork } = window.SolanaWalletAdapter.Base;
-   const network = WalletAdapterNetwork.Mainnet;
+    const { WalletAdapterNetwork } = window.SolanaWalletAdapter.Base;
+    const network = WalletAdapterNetwork.Mainnet;
 
-   const wallets = [
-    new window.SolanaWalletAdapter.Wallets.PhantomWalletAdapter(),
-    new window.SolanaWalletAdapter.Wallets.BackpackWalletAdapter(),
-    new window.SolanaWalletAdapter.Wallets.SolflareWalletAdapter({ network }),
-    new window.SolanaWalletAdapter.Wallets.GlowWalletAdapter(),
-    new window.SolanaWalletAdapter.WalletConnect.WalletConnectWalletAdapter({
-        network,
-        options: {
-            relayUrl: "wss://relay.walletconnect.com",
-            projectId: "test" // Replace with your WC project ID
-        }
-    }),
-    new window.SolanaWalletAdapter.Mobile.WalletAdapterMobile({
-        appIdentity: { name: "MCAP App" },
-        network
-    })
-];
+    const wallets = [
+        new window.SolanaWalletAdapter.Wallets.PhantomWalletAdapter(),
+        new window.SolanaWalletAdapter.Wallets.BackpackWalletAdapter(),
+        new window.SolanaWalletAdapter.Wallets.SolflareWalletAdapter({ network }),
+        new window.SolanaWalletAdapter.Wallets.GlowWalletAdapter(),
+        new window.SolanaWalletAdapter.WalletConnect.WalletConnectWalletAdapter({
+            network,
+            options: {
+                relayUrl: "wss://relay.walletconnect.com",
+                projectId: "test" // Replace with your WC project ID
+            }
+        }),
+        new window.SolanaWalletAdapter.Mobile.WalletAdapterMobile({
+            appIdentity: { name: "MCAP App" },
+            network
+        })
+    ];
 
-    const modal = new solanaWalletAdapterUI.WalletModal(wallets, {
+    const modal = new window.SolanaWalletAdapter.UI.WalletModal(wallets, {
         container: document.getElementById("wallet-modal-root")
     });
 
@@ -181,14 +181,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const waitForSDK = setInterval(() => {
         tries++;
         console.log(`[SDK check #${tries}]`, {
-            base: typeof window.solanaWalletAdapterBase,
-            wallets: typeof window.solanaWalletAdapterWallets,
-            wc: typeof window.solanaWalletAdapterWalletconnect,
-            mobile: typeof window.solanaMobileWalletAdapter,
-            ui: typeof window.solanaWalletAdapterUI
+            SolanaWalletAdapter: typeof window.SolanaWalletAdapter,
+            Base: window.SolanaWalletAdapter?.Base ? "loaded" : "missing",
+            Wallets: window.SolanaWalletAdapter?.Wallets ? "loaded" : "missing",
+            WalletConnect: window.SolanaWalletAdapter?.WalletConnect ? "loaded" : "missing",
+            Mobile: window.SolanaWalletAdapter?.Mobile ? "loaded" : "missing",
+            UI: window.SolanaWalletAdapter?.UI ? "loaded" : "missing"
         });
 
-        if (window.solanaWalletAdapterBase) {
+        if (window.SolanaWalletAdapter && window.SolanaWalletAdapter.Base) {
             clearInterval(waitForSDK);
             console.log("✅ SDK detected, initializing wallet adapter...");
             initWalletAdapter()
@@ -202,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 100);
 });
-
 
 // Jupiter Swap integration
 (function(){
@@ -244,7 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 })();
-
 
 
 if ("serviceWorker" in navigator) {
