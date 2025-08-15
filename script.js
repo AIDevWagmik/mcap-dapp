@@ -99,19 +99,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             predictionResult.innerHTML = html;
 
-    // === Share Buttons Logic ===
-    const shareDiv = document.getElementById("shareButtons");
-    shareDiv.classList.remove("hidden");
+  // Show share buttons after prediction loads
+const shareDiv = document.getElementById("shareButtons");
+shareDiv.classList.remove("hidden");
 
-    document.getElementById("shareX").onclick = () => {
-        const text = encodeURIComponent(`Check out this MCAP prediction:\n${window.location.href}`);
-        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-    };
+const shareMessage = "Just used the MCAP app from @mcapmovement using XAI (Grok 4) — try it for yourself with any token address.";
 
-    document.getElementById("shareTelegram").onclick = () => {
-        const text = encodeURIComponent(`Check out this MCAP prediction:\n${window.location.href}`);
-        window.open(`https://t.me/share/url?url=${text}`, '_blank');
-    };
+document.getElementById("shareX").onclick = () => {
+    const text = encodeURIComponent(shareMessage);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+};
+
+document.getElementById("shareTelegram").onclick = () => {
+    const text = encodeURIComponent(shareMessage);
+    window.open(`https://t.me/share/url?text=${text}`, '_blank');
+};
 
 } catch (err) {
     predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
