@@ -101,47 +101,32 @@ predictionResult.innerHTML = html;
 });
 
 let connectedWallet = null;
-let connectedWalletProvider = null; // for Jupiter
+let connectedWalletProvider = null;
 
 function detectInjectedWallets() {
     const wallets = [];
-
-    if (window.solana?.isPhantom) {
-        wallets.push({ name: "Phantom", provider: window.solana });
-    }
-    if (window.solana?.isBackpack) {
-        wallets.push({ name: "Backpack", provider: window.solana });
-    }
-    if (window.solflare) {
-        wallets.push({ name: "Solflare", provider: window.solflare });
-    }
-
+    if (window.solana?.isPhantom) wallets.push({ name: "Phantom", provider: window.solana });
+    if (window.solana?.isBackpack) wallets.push({ name: "Backpack", provider: window.solana });
+    if (window.solflare) wallets.push({ name: "Solflare", provider: window.solflare });
     return wallets;
 }
 
 async function connectWallet() {
     const injectedWallets = detectInjectedWallets();
 
-    // 1. Desktop injected wallets
+    // 1. Injected wallets (desktop or wallet in-app browser)
     if (injectedWallets.length > 0) {
-        let walletChoice;
-        if (injectedWallets.length === 1) {
-            walletChoice = injectedWallets[0];
-        } else {
-            const choiceName = prompt(`Select a wallet: ${injectedWallets.map(w => w.name).join(", ")}`);
-            walletChoice = injectedWallets.find(w => w.name.toLowerCase() === choiceName?.toLowerCase());
-            if (!walletChoice) {
-                alert("Invalid choice.");
-                return;
-            }
-        }
+        let walletChoice = injectedWallets.length === 1
+            ? injectedWallets[0]
+            : injectedWallets.find(w => w.name.toLowerCase() === prompt(`Select a wallet: ${injectedWallets.map(w => w.name).join(", ")}`)?.toLowerCase());
+
+        if (!walletChoice) return;
 
         try {
             const resp = await walletChoice.provider.connect();
             connectedWallet = resp.publicKey.toString();
             connectedWalletProvider = walletChoice.provider;
-            document.getElementById("connectWallet").innerText =
-                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
             console.log(`Connected to ${walletChoice.name}:`, connectedWallet);
             return;
         } catch (err) {
@@ -149,7 +134,7 @@ async function connectWallet() {
         }
     }
 
-    // 2. APK / Solana Mobile Wallet Adapter
+    // 2. Mobile Wallet Adapter (APK / Solana Mobile)
     try {
         const mwa = window["solanaMobileWalletAdapter"];
         if (mwa) {
@@ -157,8 +142,7 @@ async function connectWallet() {
             if (session && session.publicKey) {
                 connectedWallet = session.publicKey;
                 connectedWalletProvider = mwa;
-                document.getElementById("connectWallet").innerText =
-                    `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+                document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
                 console.log("Connected via Mobile Wallet Adapter:", connectedWallet);
                 return;
             }
@@ -167,9 +151,20 @@ async function connectWallet() {
         console.error("Mobile Wallet Adapter connection failed:", err);
     }
 
-    // 3. Mobile browser → WalletConnect fallback
+    // 3. WalletConnect with deep link (mobile browsers like Chrome/Safari)
+    const walletOptions = {
+        Phantom: "https://phantom.app/ul/browse/" + encodeURIComponent(window.location.href),
+        Solflare: "https://solflare.com/ul/browse/" + encodeURIComponent(window.location.href),
+        Backpack: "https://backpack.app/ul/browse/" + encodeURIComponent(window.location.href)
+    };
+
+    const choice = prompt(`Select a wallet: ${Object.keys(walletOptions).join(", ")}`);
+    if (!choice || !walletOptions[choice]) {
+        alert("Invalid wallet choice");
+        return;
+    }
+
     try {
-        console.log("Falling back to WalletConnect...");
         const connector = new window.WalletConnect.default({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: window.WalletConnectQRCodeModal
@@ -179,19 +174,21 @@ async function connectWallet() {
             await connector.createSession();
         }
 
+        // For mobile: open wallet app via deep link
+        window.location.href = walletOptions[choice];
+
         connector.on("connect", (error, payload) => {
             if (error) throw error;
             const { accounts } = payload.params[0];
             connectedWallet = accounts[0];
             connectedWalletProvider = connector;
-            document.getElementById("connectWallet").innerText =
-                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-            console.log("Connected via WalletConnect:", connectedWallet);
+            document.getElementById("connectWallet").innerText = `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
+            console.log("Connected via WalletConnect (mobile):", connectedWallet);
         });
 
     } catch (err) {
         console.error("WalletConnect connection failed:", err);
-        alert("No supported wallet found. Please install Phantom, Backpack, or Solflare.");
+        alert("Could not connect via WalletConnect");
     }
 }
 
