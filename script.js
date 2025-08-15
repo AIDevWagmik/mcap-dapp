@@ -1,34 +1,3 @@
-// -----------------
-// Imports (ESM only)
-// -----------------
-import { WalletAdapterNetwork } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@0.9.23/+esm";
-import { PhantomWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-phantom@0.9.13/+esm";
-import { BackpackWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-backpack@0.1.9/+esm";
-import { SolflareWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-solflare@0.6.28/+esm";
-import { GlowWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-glow@0.1.9/+esm";
-import { WalletConnectWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-walletconnect@0.1.14/+esm";
-import { WalletModal } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-ui@0.9.35/+esm";
-import { WalletAdapterMobile } from "https://cdn.jsdelivr.net/npm/@solana-mobile/wallet-adapter-mobile@1.0.0/+esm";
-
-// -----------------
-// Utility
-// -----------------
-function waitForElement(id, callback) {
-    const el = document.getElementById(id);
-    if (el) return callback(el);
-    const observer = new MutationObserver(() => {
-        const el = document.getElementById(id);
-        if (el) {
-            observer.disconnect();
-            callback(el);
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-}
-
-// -----------------
-// Prediction Logic
-// -----------------
 document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("themeToggle");
     const predictionBtn = document.getElementById("getPrediction");
@@ -53,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Fetch prediction
+    // Prediction
     predictionBtn.addEventListener("click", async () => {
         const addr = document.getElementById("contractAddress").value.trim();
         if (!addr) {
@@ -78,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             const aiText = data?.choices?.[0]?.message?.content || "No response from AI";
 
-            // Extract JSON from AI output
             const jsonMatch = aiText.match(/```json([\s\S]*?)```/);
             let jsonData = null;
             if (jsonMatch) {
@@ -89,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Narrative
             let html = `
                 <div class="card">
                     <h3>Narrative Forecast</h3>
@@ -97,13 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            // Forecast cards
             if (jsonData && jsonData.forecasts) {
-                html += `
-                    <div class="card">
-                        <h3>Forecast Summary</h3>
-                        <div class="forecast-grid">
-                `;
+                html += `<div class="card"><h3>Forecast Summary</h3><div class="forecast-grid">`;
                 Object.entries(jsonData.forecasts).forEach(([period, values]) => {
                     html += `
                         <div class="forecast-card">
@@ -118,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             predictionResult.innerHTML = html;
-
         } catch (err) {
             predictionResult.innerHTML = `<p>Error fetching prediction.</p>`;
             console.error(err);
@@ -127,53 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------
-// Wallet Connection
-// -----------------
-let connectedWallet = null;
-let connectedWalletProvider = null;
-
-async function initWalletAdapter() {
-    const network = WalletAdapterNetwork.Mainnet;
-
-    const wallets = [
-        new PhantomWalletAdapter(),
-        new BackpackWalletAdapter(),
-        new SolflareWalletAdapter({ network }),
-        new GlowWalletAdapter(),
-        new WalletConnectWalletAdapter({
-            network,
-            options: { relayUrl: "wss://relay.walletconnect.com", projectId: "test" }
-        }),
-        new WalletAdapterMobile({
-            appIdentity: { name: "MCAP App" },
-            network
-        })
-    ];
-
-    const modal = new WalletModal(wallets, {
-        container: document.getElementById("wallet-modal-root")
-    });
-
-    modal.on("connect", (wallet) => {
-        connectedWalletProvider = wallet.adapter;
-        connectedWallet = wallet.adapter.publicKey?.toBase58() || null;
-        if (connectedWallet) {
-            document.getElementById("connectWallet").innerText =
-                `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-        }
-    });
-
-    waitForElement("connectWallet", (btn) => {
-        btn.addEventListener("click", () => modal.show());
-    });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    initWalletAdapter().catch(err => console.error("Wallet adapter init failed:", err));
-});
-
-// -----------------
-// Jupiter Swap
+// Jupiter Swap Integration
 // -----------------
 (function(){
     let jupInited = false;
@@ -187,30 +102,26 @@ document.addEventListener("DOMContentLoaded", () => {
         jupInitPromise = window.Jupiter.init({
             displayMode: 'modal',
             formProps: {
-                initialInputMint: 'So11111111111111111111111111111111111111112',
-                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk',
-                onConnectWallet: async () => {
-                    if (!connectedWalletProvider) {
-                        const btn = document.getElementById("connectWallet");
-                        if (btn) btn.click();
-                    }
-                    return connectedWalletProvider;
-                }
+                initialInputMint: 'So11111111111111111111111111111111111111112', // SOL
+                initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk' // MCAP token
             }
         });
         return jupInitPromise;
     }
 
-    waitForElement("openSwap", (swapBtn) => {
-        swapBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await ensureJupiter();
-                if (window.Jupiter?.resume) window.Jupiter.resume();
-            } catch(err) {
-                console.error('Jupiter not ready:', err);
-            }
-        });
+    window.addEventListener('load', function(){
+        const trigger = document.getElementById('openSwap');
+        if (trigger) {
+            trigger.addEventListener('click', async function(e){
+                e.preventDefault();
+                try {
+                    await ensureJupiter();
+                    if (window.Jupiter?.resume) window.Jupiter.resume();
+                } catch(err){
+                    console.error('Jupiter not ready:', err);
+                }
+            });
+        }
     });
 })();
 
