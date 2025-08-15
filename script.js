@@ -109,30 +109,23 @@ import { BackpackWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wall
 import { SolflareWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-solflare@0.6.28/+esm";
 import { GlowWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-glow@0.1.9/+esm";
 import { WalletConnectWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-walletconnect@0.1.14/+esm";
-import { WalletAdapterMobile } from "https://cdn.jsdelivr.net/npm/@solana-mobile/wallet-adapter-mobile@0.1.7/+esm";
-import { WalletModal } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-ui@0.9.35/+esm";
 
+// The rest of your prediction code stays exactly as it was above...
 
 let connectedWallet = null;
 let connectedWalletProvider = null;
 
-console.log("Wallet section loaded");
-
 function waitForElement(id, callback) {
-    function startObserving() {
+    const el = document.getElementById(id);
+    if (el) return callback(el);
+    const observer = new MutationObserver(() => {
         const el = document.getElementById(id);
-        if (el) return callback(el);
-        const observer = new MutationObserver(() => {
-            const el = document.getElementById(id);
-            if (el) {
-                observer.disconnect();
-                callback(el);
-            }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
-    if (document.body) startObserving();
-    else document.addEventListener("DOMContentLoaded", startObserving);
+        if (el) {
+            observer.disconnect();
+            callback(el);
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 async function initWalletAdapter() {
@@ -145,18 +138,16 @@ async function initWalletAdapter() {
         new GlowWalletAdapter(),
         new WalletConnectWalletAdapter({
             network,
-            options: {
-                relayUrl: "wss://relay.walletconnect.com",
-                projectId: "test"
-            }
+            options: { relayUrl: "wss://relay.walletconnect.com", projectId: "test" }
         }),
-        new WalletAdapterMobile({
+        // Mobile + UI loaded from UMD in HTML
+        new window.solanaMobileWalletAdapter.WalletAdapterMobile({
             appIdentity: { name: "MCAP App" },
             network
         })
     ];
 
-    const modal = new WalletModal(wallets, {
+    const modal = new window.solanaWalletAdapterUI.WalletModal(wallets, {
         container: document.getElementById("wallet-modal-root")
     });
 
@@ -166,7 +157,6 @@ async function initWalletAdapter() {
         if (connectedWallet) {
             document.getElementById("connectWallet").innerText =
                 `Wallet: ${connectedWallet.slice(0, 4)}...${connectedWallet.slice(-4)}`;
-            console.log(`Connected to wallet: ${connectedWallet}`);
         }
     });
 
@@ -176,9 +166,9 @@ async function initWalletAdapter() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, initializing wallet adapter...");
     initWalletAdapter().catch(err => console.error("Wallet adapter init failed:", err));
 });
+
 
 // Jupiter Swap integration
 (function(){
