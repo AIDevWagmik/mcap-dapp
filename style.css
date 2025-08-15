@@ -229,3 +229,15 @@ footer {
   font-size: 14px;
   color: rgba(255,255,255,0.7);
 }
+
+#jupiterContainer {
+  width: 100%;
+  max-width: 400px; /* keep it mobile-friendly */
+}
+
+#predictionResult pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
