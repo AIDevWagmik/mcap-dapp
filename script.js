@@ -106,11 +106,12 @@ predictionResult.innerHTML = html;
 import { WalletAdapterNetwork } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@0.9.23/+esm";
 import { PhantomWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-phantom@0.9.13/+esm";
 import { BackpackWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-backpack@0.1.9/+esm";
-import { SolflareWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-solflare@0.5.17/+esm";
+import { SolflareWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-solflare@0.6.28/+esm";
 import { GlowWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-glow@0.1.9/+esm";
 import { WalletConnectWalletAdapter } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-walletconnect@0.1.14/+esm";
 import { WalletAdapterMobile } from "https://cdn.jsdelivr.net/npm/@solana-mobile/wallet-adapter-mobile@0.1.7/+esm";
-import { WalletModal } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-ui@0.9.26/+esm";
+import { WalletModal } from "https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-ui@0.9.35/+esm";
+
 
 let connectedWallet = null;
 let connectedWalletProvider = null;
