@@ -74,17 +74,16 @@ footer {
 #app {
   display: flex;
   height: 100%;
-  width: 300%; /* 3 screens side by side */
-  transform: translateX(0);
+  width: 300%;              /* 3 screens, use % not vw */
   transition: transform 0.3s ease;
 }
 
 .screen {
-  flex: 0 0 100%; /* each screen takes 100% of the .mobile-frame */
-  height: calc(100vh - 120px); /* adjust for header/footer */
+  flex: 0 0 100%;           /* each screen = 100% of .mobile-frame */
+  height: 100%;
   box-sizing: border-box;
-  overflow-y: auto; /* let each screen scroll internally */
 }
+
 
 
 /* ---- Sections ---- */
