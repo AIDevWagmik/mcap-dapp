@@ -155,48 +155,34 @@ if ("serviceWorker" in navigator) {
 let currentScreen = 0;
 const totalScreens = 3;
 
-const app = document.getElementById('app');
-const headerLogo = document.getElementById("header-logo");
-const headerImages = [
-  "assets/logos/logo1.png",
-  "assets/logos/logo2.png",
-  "assets/logos/logo3.png"
-];
-
-function updateHeaderLogo(index) {
-  headerLogo.src = headerImages[index];
-}
+const app = document.getElementById("app");
+const frame = document.querySelector(".mobile-frame");
+let currentScreen = 0;
+let startX = 0;
 
 function goToScreen(index) {
-  const frame = document.querySelector('.mobile-frame');
-  const frameWidth = frame.offsetWidth; // actual frame width
+  const frameWidth = frame.offsetWidth;
   currentScreen = index;
   app.style.transform = `translateX(-${currentScreen * frameWidth}px)`;
   updateHeaderLogo(currentScreen);
 }
 
-// Reset transition after it ends (prevents double-animations)
-app.addEventListener("transitionend", () => {
-  app.style.transition = "";
-});
-
-// Swipe handling
-let startX = 0;
 app.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
 });
 
-app.addEventListener('touchend', e => {
+app.addEventListener("touchend", e => {
   const endX = e.changedTouches[0].clientX;
   const deltaX = startX - endX;
 
   if (Math.abs(deltaX) > 50) {
-    if (deltaX > 0 && currentScreen < totalScreens - 1) {
+    if (deltaX > 0 && currentScreen < 2) {
       goToScreen(currentScreen + 1);
     } else if (deltaX < 0 && currentScreen > 0) {
       goToScreen(currentScreen - 1);
     }
   }
 });
+
 
 
