@@ -149,11 +149,9 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+
 /* -----------------
-   Swipe Navigation + Header Logo (stable)
--------------------*/
-/* -----------------
-   Swipe Navigation + Header Logo (stable)
+   Swipe Navigation (stable)
 -------------------*/
 let currentScreen = 0;
 const totalScreens = 3;
@@ -161,21 +159,10 @@ let startX = 0;
 
 const app = document.getElementById("app");
 const frame = document.querySelector(".mobile-frame");
-const headerLogo = document.getElementById("header-logo");
-const headerImages = [
-  "assets/logos/logo1.png", // Prediction screen
-  "assets/logos/logo2.png", // Jupiter Swap screen
-  "assets/logos/logo3.png"  // Wallet Tracking screen
-];
-
-function updateHeaderLogo(index) {
-  headerLogo.src = headerImages[index];
-}
 
 function goToScreen(index) {
   currentScreen = index;
-  app.style.transform = `translateX(-${currentScreen * 100}%)`; 
-  updateHeaderLogo(currentScreen);
+  app.style.transform = `translateX(-${currentScreen * 100}vw)`; // <-- fixed unit
 }
 
 app.addEventListener("touchstart", e => {
@@ -186,7 +173,7 @@ app.addEventListener("touchend", e => {
   const endX = e.changedTouches[0].clientX;
   const deltaX = startX - endX;
 
-  if (Math.abs(deltaX) > 50) {
+  if (Math.abs(deltaX) > 50) { // swipe threshold
     if (deltaX > 0 && currentScreen < totalScreens - 1) {
       goToScreen(currentScreen + 1);
     } else if (deltaX < 0 && currentScreen > 0) {
