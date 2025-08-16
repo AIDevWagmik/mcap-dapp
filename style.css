@@ -19,17 +19,18 @@ html, body {
   overflow-y: hidden;        /* prevent vertical scroll (swipe only) */
 }
 
+/* Mobile frame container */
 .mobile-frame {
-  width: 100%;
-  max-width: 760px;
-  height: 100vh;
-  margin: 0 auto;
+  max-width: 760px;      /* lock width like a mobile phone */
+  margin: 0 auto;        /* center on larger screens */
+  height: 100vh;         /* take full viewport height */
   background: var(--page-bg);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
   position: relative;
+  overflow: hidden;      /* prevent scrolling out of bounds */
+  box-shadow: 0 0 20px rgba(0,0,0,0.3); /* optional: phone feel */
+  border-radius: 16px;   /* optional: rounded phone corners */
 }
+
 
 .theme-toggle {
   position: fixed;
