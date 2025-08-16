@@ -168,11 +168,10 @@ function updateHeaderLogo(index) {
 }
 
 function goToScreen(index) {
-  if (index < 0) index = 0;
-  if (index >= totalScreens) index = totalScreens - 1;
+  const frame = document.querySelector('.mobile-frame');
+  const frameWidth = frame.offsetWidth; // actual frame width
   currentScreen = index;
-  app.style.transition = "transform 0.3s ease"; // ensure smooth snap
-  app.style.transform = `translateX(-${currentScreen * 100}%)`;
+  app.style.transform = `translateX(-${currentScreen * frameWidth}px)`;
   updateHeaderLogo(currentScreen);
 }
 
@@ -187,14 +186,17 @@ app.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
 });
 
-app.addEventListener("touchend", e => {
-  const deltaX = startX - e.changedTouches[0].clientX;
+app.addEventListener('touchend', e => {
+  const endX = e.changedTouches[0].clientX;
+  const deltaX = startX - endX;
 
   if (Math.abs(deltaX) > 50) {
-    if (deltaX > 0) goToScreen(currentScreen + 1); // swipe left → next
-    else goToScreen(currentScreen - 1);            // swipe right → prev
-  } else {
-    goToScreen(currentScreen); // snap back if swipe too small
+    if (deltaX > 0 && currentScreen < totalScreens - 1) {
+      goToScreen(currentScreen + 1);
+    } else if (deltaX < 0 && currentScreen > 0) {
+      goToScreen(currentScreen - 1);
+    }
   }
 });
+
 
