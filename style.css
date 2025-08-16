@@ -14,7 +14,9 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #000; /* frame background */
+  background: #000;          /* frame background */
+  overflow-x: hidden;        /* prevent horizontal scroll */
+  overflow-y: hidden;        /* prevent vertical scroll (swipe only) */
 }
 
 .mobile-frame {
@@ -108,16 +110,15 @@ footer {
 
 #app {
   display: flex;
-  flex: 1;
-  width: 300%; /* 3 screens */
+  height: 100%;
+  width: 300vw;   /* 3 screens * 100vw */
+  transform: translateX(0);
   transition: transform 0.3s ease;
 }
 
 .screen {
-  flex: 0 0 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-  overflow-y: auto;
+  width: 100vw;   /* always exactly 1 screen wide */
+  flex-shrink: 0; /* never shrink inside flex */
 }
 
 .modal-overlay {
@@ -136,3 +137,10 @@ footer {
   max-width: 400px;
   text-align: center;
 }
+
+#jupiterContainer {
+  max-width: 400px;
+  width: 100%;
+  overflow: hidden;
+}
+
