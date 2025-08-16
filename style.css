@@ -74,18 +74,18 @@ footer {
 #app {
   display: flex;
   height: 100%;
-  width: 300%;   /* still 3 screens wide */
+  width: 300%; /* 3 screens side by side */
   transform: translateX(0);
   transition: transform 0.3s ease;
 }
 
 .screen {
-  width: 100%;        /* 100% of .mobile-frame, not 100vw */
-  flex-shrink: 0;
-  height: calc(100vh - 120px); /* adjust if header/footer fixed */
+  flex: 0 0 100%; /* each screen takes 100% of the .mobile-frame */
+  height: calc(100vh - 120px); /* adjust for header/footer */
   box-sizing: border-box;
-  overflow-y: auto;   /* allow internal scroll if needed */
+  overflow-y: auto; /* let each screen scroll internally */
 }
+
 
 /* ---- Sections ---- */
 .section-title {
