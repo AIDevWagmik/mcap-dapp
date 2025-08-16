@@ -106,13 +106,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let jupInitPromise = null;
 
   function ensureJupiter(){
+    const container = document.getElementById("jupiterContainer");
+
+    // 🔑 Reset container if it already has something inside
+    if (container.innerHTML !== "") {
+      container.innerHTML = "";
+      jupInited = false; // force re-init
+    }
+
     if (jupInited) return jupInitPromise;
     if (!window.Jupiter) return Promise.reject(new Error('Jupiter not loaded'));
 
     jupInited = true;
     jupInitPromise = window.Jupiter.init({
       displayMode: 'integrated',
-      container: document.getElementById("jupiterContainer"),
+      container,
       formProps: {
         initialInputMint: 'So11111111111111111111111111111111111111112',
         initialOutputMint: 'HTJjDuxxnxHGoKTiTYLMFQ59gFjSBS3bXiCWJML6bonk'
