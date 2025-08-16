@@ -152,13 +152,25 @@ if ("serviceWorker" in navigator) {
 /* -----------------
    Swipe Navigation + Header Logo (stable)
 -------------------*/
+/* -----------------
+   Swipe Navigation + Header Logo (stable)
+-------------------*/
 let currentScreen = 0;
 const totalScreens = 3;
+let startX = 0;
 
 const app = document.getElementById("app");
 const frame = document.querySelector(".mobile-frame");
-let currentScreen = 0;
-let startX = 0;
+const headerLogo = document.getElementById("header-logo");
+const headerImages = [
+  "assets/logos/logo1.png", // Prediction screen
+  "assets/logos/logo2.png", // Jupiter Swap screen
+  "assets/logos/logo3.png"  // Wallet Tracking screen
+];
+
+function updateHeaderLogo(index) {
+  headerLogo.src = headerImages[index];
+}
 
 function goToScreen(index) {
   const frameWidth = frame.offsetWidth;
@@ -176,13 +188,10 @@ app.addEventListener("touchend", e => {
   const deltaX = startX - endX;
 
   if (Math.abs(deltaX) > 50) {
-    if (deltaX > 0 && currentScreen < 2) {
+    if (deltaX > 0 && currentScreen < totalScreens - 1) {
       goToScreen(currentScreen + 1);
     } else if (deltaX < 0 && currentScreen > 0) {
       goToScreen(currentScreen - 1);
     }
   }
 });
-
-
-
