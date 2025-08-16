@@ -150,13 +150,12 @@ if ("serviceWorker" in navigator) {
 }
 
 /* -----------------
-   Swipe Navigation + Header Logo
+   Swipe Navigation + Header Logo (stable)
 -------------------*/
 let currentScreen = 0;
 const totalScreens = 3;
-let startX = 0;
 
-const app = document.getElementById("app");
+const app = document.getElementById('app');
 const headerLogo = document.getElementById("header-logo");
 const headerImages = [
   "assets/logos/logo1.png",
@@ -169,21 +168,33 @@ function updateHeaderLogo(index) {
 }
 
 function goToScreen(index) {
+  if (index < 0) index = 0;
+  if (index >= totalScreens) index = totalScreens - 1;
   currentScreen = index;
+  app.style.transition = "transform 0.3s ease"; // ensure smooth snap
   app.style.transform = `translateX(-${currentScreen * 100}%)`;
   updateHeaderLogo(currentScreen);
 }
 
+// Reset transition after it ends (prevents double-animations)
+app.addEventListener("transitionend", () => {
+  app.style.transition = "";
+});
+
+// Swipe handling
+let startX = 0;
 app.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
 });
+
 app.addEventListener("touchend", e => {
   const deltaX = startX - e.changedTouches[0].clientX;
+
   if (Math.abs(deltaX) > 50) {
-    if (deltaX > 0 && currentScreen < totalScreens - 1) {
-      goToScreen(currentScreen + 1);
-    } else if (deltaX < 0 && currentScreen > 0) {
-      goToScreen(currentScreen - 1);
-    }
+    if (deltaX > 0) goToScreen(currentScreen + 1); // swipe left → next
+    else goToScreen(currentScreen - 1);            // swipe right → prev
+  } else {
+    goToScreen(currentScreen); // snap back if swipe too small
   }
 });
+
