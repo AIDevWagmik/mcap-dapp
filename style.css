@@ -5,6 +5,7 @@
   --page-bg: #ffffff;
 }
 
+/* Dark mode */
 html[data-theme="dark"] {
   --page-bg: #0f1724;
   --text-color: #e8eef7;
@@ -14,28 +15,29 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #000;          /* frame background */
-  overflow-x: hidden;        /* prevent horizontal scroll */
-  overflow-y: hidden;        /* prevent vertical scroll (swipe only) */
+  background: #000;            /* app frame bg */
+  overflow: hidden;            /* no body scroll */
 }
 
-/* Mobile frame container */
+/* ---- Mobile Frame ---- */
 .mobile-frame {
-  max-width: 760px;      /* lock width like a mobile phone */
-  margin: 0 auto;        /* center on larger screens */
-  height: 100vh;         /* take full viewport height */
+  max-width: 760px;            /* phone width */
+  margin: 0 auto;
+  height: 100vh;
   background: var(--page-bg);
   position: relative;
-  overflow: hidden;      /* prevent scrolling out of bounds */
-  box-shadow: 0 0 20px rgba(0,0,0,0.3); /* optional: phone feel */
-  border-radius: 16px;   /* optional: rounded phone corners */
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
-
+/* ---- Fixed Elements ---- */
 .theme-toggle {
-  position: fixed;
+  position: absolute;
   top: 12px;
-  right: calc(50% - 380px + 12px);
+  right: 12px;
   background: var(--blue-title);
   color: white;
   border: none;
@@ -45,7 +47,7 @@ html, body {
   font-size: 1.1rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 9999;
+  z-index: 1000;
 }
 
 .app-header {
@@ -53,11 +55,38 @@ html, body {
   padding: 1rem;
   background: var(--page-bg);
   flex-shrink: 0;
+  z-index: 500;
 }
 .logo {
   height: 48px;
 }
 
+footer {
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  background: var(--page-bg);
+  flex-shrink: 0;
+  z-index: 500;
+}
+
+/* ---- Swipe Area ---- */
+#app {
+  flex: 1;                     /* take remaining height */
+  display: flex;
+  width: 300%;                 /* 3 screens side by side */
+  height: calc(100% - 120px);  /* minus header + footer approx */
+  transition: transform 0.3s ease;
+}
+
+.screen {
+  flex: 0 0 100%;              /* each screen fills the frame */
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;            /* allow internal scroll */
+}
+
+/* ---- Sections ---- */
 .section-title {
   background: var(--blue-title);
   color: white;
@@ -91,14 +120,7 @@ button:hover {
   color: gray;
 }
 
-footer {
-  text-align: center;
-  font-size: 0.8rem;
-  padding: 0.5rem;
-  background: var(--page-bg);
-  flex-shrink: 0;
-}
-
+/* ---- Share Buttons ---- */
 #shareButtons {
   display: flex;
   gap: 10px;
@@ -109,19 +131,7 @@ footer {
   display: none;
 }
 
-#app {
-  display: flex;
-  height: 100%;
-  width: 300vw;   /* 3 screens * 100vw */
-  transform: translateX(0);
-  transition: transform 0.3s ease;
-}
-
-.screen {
-  width: 100vw;   /* always exactly 1 screen wide */
-  flex-shrink: 0; /* never shrink inside flex */
-}
-
+/* ---- Modal ---- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -129,6 +139,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2000;
 }
 .modal-content {
   background: #1a1a1a;
@@ -139,6 +150,7 @@ footer {
   text-align: center;
 }
 
+/* ---- Jupiter ---- */
 #jupiterContainer {
   max-width: 400px;
   width: 100%;
