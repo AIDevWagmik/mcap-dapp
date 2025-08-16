@@ -173,9 +173,8 @@ function updateHeaderLogo(index) {
 }
 
 function goToScreen(index) {
-  const frameWidth = frame.offsetWidth;
   currentScreen = index;
-  app.style.transform = `translateX(-${currentScreen * frameWidth}px)`;
+  app.style.transform = `translateX(-${currentScreen * 100}%)`; 
   updateHeaderLogo(currentScreen);
 }
 
