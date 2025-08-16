@@ -1,4 +1,4 @@
-const CACHE_NAME = "mcap-app-cache-v1";
+const CACHE_NAME = "mcap-app-cache-v2";
 const ASSETS_TO_CACHE = [
     "/",              // root
     "/index.html",
